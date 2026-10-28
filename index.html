@@ -39,7 +39,11 @@
   <main id="contenu">
     <!-- 1. HERO : le logo et la navigation sont les seuls éléments superposés au carrousel. -->
     <section class="hero" id="accueil" aria-label="Univers visuel NACHA">
-     
+      <div class="hero-backdrop" aria-hidden="true">
+        <div class="hero-orbit hero-orbit--one"></div>
+        <div class="hero-orbit hero-orbit--two"></div>
+        <img class="hero-pepper" src="piment_vert.jpg" alt="" fetchpriority="high">
+      </div>
       <div class="hero-media" id="heroMedia" aria-hidden="true">
         <video id="heroVideo" class="hero-video" muted playsinline loop preload="none"></video>
         <img id="heroImage" class="hero-image" alt="" decoding="async">
