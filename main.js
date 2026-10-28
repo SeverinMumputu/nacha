@@ -1,11 +1,9 @@
 (() => {
   'use strict';
-
   const config = window.NACHA_CONFIG || { heroSlides: [], products: [], socials: {} };
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const $ = (selector, scope = document) => scope.querySelector(selector);
   const $$ = (selector, scope = document) => [...scope.querySelectorAll(selector)];
-
   // Navigation mobile : ouverte via un vrai bouton, fermable au clavier et au clic sur une destination.
   const menuToggle = $('#menuToggle');
   const mobileNav = $('#mobileNav');
@@ -36,7 +34,6 @@
     });
     window.addEventListener('resize', () => { if (window.innerWidth > 820) closeMenu(); }, { passive: true });
   }
-
   // Reveal : relecture à chaque nouvelle entrée dans le viewport, avec un état immédiatement lisible sans JS.
   const revealItems = $$('[data-reveal]');
   if ('IntersectionObserver' in window && !prefersReducedMotion.matches) {
@@ -55,41 +52,50 @@
   } else {
     revealItems.forEach(item => item.classList.add('is-revealed'));
   }
-
-  // Carrousel Hero : lecture automatique des vidéos.
-  // Les URLs restent configurées exclusivement dans config.js.
+  // Carrousel Hero : lecture automatique des images et des vidéos configurées dans config.js.
   const hero = $('.hero');
   const heroVideo = $('#heroVideo');
+  const heroImage = $('#heroImage');
   const heroPagination = $('#heroPagination');
-  const heroDots = $$('.hero-dot');
+  const heroDots = [];
   const heroCurrent = $('#heroCurrent');
 
   let activeSlide = 0;
   let heroAutoplayTimer = null;
 
   const HERO_AUTOPLAY_DELAY = 8000;
-  const slides = (config.heroSlides || []).slice(0, 3);
+  const slides = (config.heroSlides || []).filter(slide => slide && (slide.video || slide.image));
 
-  const applySlide = (index) => {
+  // Générer autant d'indicateurs que de médias configurés.
+  if (heroPagination) {
+    heroPagination.replaceChildren();
+    slides.forEach((slide, index) => {
+      const dot = document.createElement('button');
+      dot.type = 'button';
+      dot.className = `hero-dot${index === 0 ? ' is-active' : ''}`;
+      dot.setAttribute('aria-label', slide.label || `Séquence ${index + 1}`);
+      dot.setAttribute('aria-pressed', String(index === 0));
+      dot.disabled = true;
+      dot.tabIndex = -1;
+      const indicator = document.createElement('span');
+      indicator.setAttribute('aria-hidden', 'true');
+      dot.appendChild(indicator);
+      heroPagination.appendChild(dot);
+      heroDots.push(dot);
+    });
+  }
+
+  const applySlide = index => {
     if (!slides.length || !hero) return;
 
     activeSlide = (index + slides.length) % slides.length;
     const slide = slides[activeSlide];
 
-    hero.classList.remove(
-      'hero-scene--one',
-      'hero-scene--two',
-      'hero-scene--three'
-    );
-
-    hero.classList.add(
-      slide.theme ||
-      `hero-scene--${['one', 'two', 'three'][activeSlide % 3]}`
-    );
+    hero.classList.remove('hero-scene--one', 'hero-scene--two', 'hero-scene--three');
+    hero.classList.add(slide.theme || `hero-scene--${['one', 'two', 'three'][activeSlide % 3]}`);
 
     heroDots.forEach((dot, dotIndex) => {
       const selected = dotIndex === activeSlide;
-
       dot.classList.toggle('is-active', selected);
       dot.setAttribute('aria-pressed', String(selected));
     });
@@ -98,68 +104,90 @@
       heroCurrent.textContent = String(activeSlide + 1).padStart(2, '0');
     }
 
-    if (!heroVideo) return;
-
+    // Une entrée vidéo utilise le lecteur existant ; une entrée image utilise #heroImage.
     const nextVideo = slide.video || '';
-    const currentSource =
-      heroVideo.getAttribute('data-current-source') || '';
+    const nextImage = nextVideo ? '' : (slide.image || '');
 
-    if (nextVideo !== currentSource) {
-      heroVideo.pause();
-      heroVideo.removeAttribute('src');
+    if (heroVideo) {
+      const currentVideo = heroVideo.getAttribute('data-current-source') || '';
 
-      while (heroVideo.firstChild) {
-        heroVideo.removeChild(heroVideo.firstChild);
-      }
-
-      heroVideo.removeAttribute('poster');
-      heroVideo.classList.remove('is-visible');
-
-      if (slide.poster) {
-        heroVideo.setAttribute('poster', slide.poster);
-      }
-
-      if (nextVideo) {
-        heroVideo.src = nextVideo;
-        heroVideo.setAttribute('data-current-source', nextVideo);
-        heroVideo.load();
-
-        if (!prefersReducedMotion.matches) {
-          heroVideo.play().catch(() => {});
-        }
-      } else {
+      if (nextVideo !== currentVideo) {
+        heroVideo.pause();
+        heroVideo.classList.remove('is-visible');
+        heroVideo.removeAttribute('src');
         heroVideo.removeAttribute('data-current-source');
+        heroVideo.removeAttribute('poster');
+
+        if (nextVideo) {
+          if (slide.poster) heroVideo.setAttribute('poster', slide.poster);
+          heroVideo.setAttribute('data-current-source', nextVideo);
+          heroVideo.src = nextVideo;
+          heroVideo.load();
+          if (!prefersReducedMotion.matches) {
+            heroVideo.play().catch(() => {});
+          }
+        } else {
+          heroVideo.load();
+        }
+      } else if (nextVideo && !prefersReducedMotion.matches && heroVideo.paused) {
+        heroVideo.play().catch(() => {});
       }
-    } else if (
-      nextVideo &&
-      !prefersReducedMotion.matches &&
-      heroVideo.paused
-    ) {
-      heroVideo.play().catch(() => {});
+    }
+
+    if (heroImage) {
+      const currentImage = heroImage.getAttribute('data-current-source') || '';
+
+      if (nextImage !== currentImage) {
+        heroImage.classList.remove('is-visible');
+        heroImage.onload = null;
+        heroImage.onerror = null;
+        heroImage.removeAttribute('src');
+        heroImage.removeAttribute('data-current-source');
+
+        if (nextImage) {
+          heroImage.onload = () => {
+            if (heroImage.getAttribute('data-current-source') === nextImage && slides[activeSlide]?.image === nextImage) {
+              heroImage.classList.add('is-visible');
+            }
+          };
+          heroImage.onerror = () => {
+            if (heroImage.getAttribute('data-current-source') === nextImage) {
+              heroImage.classList.remove('is-visible');
+              heroImage.removeAttribute('src');
+              heroImage.removeAttribute('data-current-source');
+              console.error(`Impossible de charger l'image du Hero : ${nextImage}`);
+            }
+          };
+          heroImage.setAttribute('data-current-source', nextImage);
+          heroImage.src = nextImage;
+          if (heroImage.complete && heroImage.naturalWidth > 0) {
+            heroImage.classList.add('is-visible');
+          }
+        }
+      } else if (nextImage && heroImage.complete && heroImage.naturalWidth > 0) {
+        heroImage.classList.add('is-visible');
+      }
     }
   };
 
   if (heroVideo) {
     heroVideo.addEventListener('canplay', () => {
-      heroVideo.classList.add('is-visible');
+      const currentSlide = slides[activeSlide];
+      if (currentSlide?.video && currentSlide.video === heroVideo.getAttribute('data-current-source')) {
+        heroVideo.classList.add('is-visible');
+      }
     });
 
     heroVideo.addEventListener('error', () => {
+      const currentSlide = slides[activeSlide];
+      const currentSource = heroVideo.getAttribute('data-current-source');
+      if (!currentSource || currentSlide?.video !== currentSource) return;
       heroVideo.classList.remove('is-visible');
       heroVideo.removeAttribute('src');
       heroVideo.removeAttribute('data-current-source');
     });
   }
 
-  // La pagination devient un indicateur visuel non interactif.
-  if (heroPagination) {
-    heroDots.forEach(dot => {
-      dot.disabled = true;
-      dot.tabIndex = -1;
-    });
-  }
-
-  // Démarrage et arrêt du défilement automatique.
   const stopHeroAutoplay = () => {
     if (heroAutoplayTimer !== null) {
       window.clearInterval(heroAutoplayTimer);
@@ -169,30 +197,25 @@
 
   const startHeroAutoplay = () => {
     stopHeroAutoplay();
-
     if (slides.length < 2 || prefersReducedMotion.matches) return;
-
     heroAutoplayTimer = window.setInterval(() => {
-      if (!document.hidden) {
-        applySlide(activeSlide + 1);
-      }
+      if (!document.hidden) applySlide(activeSlide + 1);
     }, HERO_AUTOPLAY_DELAY);
   };
 
-  // Afficher la première séquence au chargement.
+  // Afficher le premier média puis faire défiler images et vidéos automatiquement.
   applySlide(0);
   startHeroAutoplay();
 
-  // Respecter la préférence de réduction des animations.
   prefersReducedMotion.addEventListener?.('change', event => {
     if (event.matches) {
       if (heroVideo) heroVideo.pause();
       stopHeroAutoplay();
     } else {
-      if (heroVideo && heroVideo.getAttribute('src')) {
+      const currentSlide = slides[activeSlide];
+      if (heroVideo && currentSlide?.video && heroVideo.getAttribute('src')) {
         heroVideo.play().catch(() => {});
       }
-
       startHeroAutoplay();
     }
   });
@@ -207,6 +230,13 @@
   const productKicker = $('#productKicker');
   const productDescription = $('#productDescription');
   const productFacts = $('#productFacts');
+  const productPrice = $('#productPrice');
+  const productAddToCartButton = $('#productAddToCart');
+  const formatPrice = price => {
+    if (price === null || price === undefined || price === '' || !Number.isFinite(Number(price)) || Number(price) <= 0) return 'Prix à renseigner';
+    return `${new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(Number(price))} ${config.currency || 'FC'}`;
+  };
+  const hasValidPrice = product => typeof product?.price === 'number' && Number.isFinite(product.price) && product.price > 0;
   let activeProduct = 0;
   const renderProduct = index => {
     const products = config.products || [];
@@ -228,6 +258,8 @@
     if (productTitle) productTitle.innerHTML = `${escapeHtml(item.title || 'NACHA')} <em>${escapeHtml(item.weight || '')}</em>`;
     if (productKicker) productKicker.textContent = item.kicker || '';
     if (productDescription) productDescription.textContent = item.description || '';
+    if (productPrice) productPrice.textContent = formatPrice(item.price);
+    if (productAddToCartButton) productAddToCartButton.setAttribute('aria-label', `Ajouter ${item.title || 'ce produit'} au panier`);
     if (productFacts) {
       productFacts.replaceChildren();
       (item.facts || []).forEach(fact => {
@@ -240,6 +272,7 @@
         const image = document.createElement('img'); image.src = item.image; image.alt = item.imageAlt || item.title || 'Produit NACHA'; image.className = 'official-product-image';
         image.addEventListener('error', () => showProductPlaceholder(), { once: true });
         productVisual.appendChild(image);
+        if (productAddToCartButton) productVisual.appendChild(productAddToCartButton);
       } else showProductPlaceholder();
     }
     productOptions.forEach((button, buttonIndex) => {
@@ -257,6 +290,7 @@
     const placeholder = document.createElement('div'); placeholder.className = 'asset-placeholder asset-placeholder--product';
     placeholder.innerHTML = '<span class="asset-placeholder__icon" aria-hidden="true">✳</span><strong>Visuel officiel du sachet</strong><span>À intégrer avant publication</span>';
     productVisual.append(orbitA, orbitB, pepper, placeholder);
+    if (productAddToCartButton) productVisual.appendChild(productAddToCartButton);
     productVisual.setAttribute('aria-label', 'Emplacement de la photographie officielle du produit');
   };
   function escapeHtml(value) {
@@ -267,87 +301,326 @@
   $('#productNext')?.addEventListener('click', () => renderProduct(activeProduct + 1));
   renderProduct(0);
 
-    // Carrousel automatique de l'image du footer uniquement.
+  // E-commerce NACHA : panier persistant, quantités, suppression et commande WhatsApp.
+  const cartStorageKey = 'nacha-cart-v1';
+  const cartTrigger = $('#cartTrigger');
+  const cartCount = $('#cartCount');
+  const cartDrawer = $('#cartDrawer');
+  const cartBackdrop = $('#cartBackdrop');
+  const cartClose = $('#cartClose');
+  const cartItemsContainer = $('#cartItems');
+  const cartEmpty = $('#cartEmpty');
+  const cartSubtotal = $('#cartSubtotal');
+  const cartStatus = $('#cartStatus');
+  const cartClear = $('#cartClear');
+  const checkoutWhatsapp = $('#checkoutWhatsapp');
+  let cartReturnFocus = null;
+
+  const getProductId = (product, index) => String(product.id || index);
+  const findProduct = id => (config.products || []).find((product, index) => getProductId(product, index) === String(id));
+
+  const loadCart = () => {
+    try {
+      const stored = JSON.parse(window.localStorage.getItem(cartStorageKey) || '[]');
+      if (!Array.isArray(stored)) return [];
+      return stored.map(entry => ({
+        id: String(entry.id),
+        quantity: Math.max(1, Math.floor(Number(entry.quantity) || 1))
+      })).filter(entry => findProduct(entry.id));
+    } catch (_) {
+      return [];
+    }
+  };
+
+  let cart = loadCart();
+
+  const saveCart = () => {
+    try {
+      window.localStorage.setItem(cartStorageKey, JSON.stringify(cart));
+    } catch (_) {
+      // Le panier reste fonctionnel en mémoire si le navigateur bloque le stockage local.
+    }
+  };
+
+  const getCartQuantity = () => cart.reduce((sum, entry) => sum + entry.quantity, 0);
+  const getCartSubtotal = () => cart.reduce((sum, entry) => {
+    const product = findProduct(entry.id);
+    return product && hasValidPrice(product) ? sum + product.price * entry.quantity : sum;
+  }, 0);
+  const cartHasMissingPrices = () => cart.some(entry => {
+    const product = findProduct(entry.id);
+    return !product || !hasValidPrice(product);
+  });
+
+  const setCartStatus = (message, isError = false) => {
+    if (!cartStatus) return;
+    cartStatus.textContent = message;
+    cartStatus.classList.toggle('is-error', isError);
+  };
+
+  const makeCartButton = (label, text, action, extraClass = '') => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = extraClass;
+    button.dataset.cartAction = action;
+    button.setAttribute('aria-label', label);
+    button.textContent = text;
+    return button;
+  };
+
+  const renderCart = () => {
+    if (!cartItemsContainer) return;
+    cartItemsContainer.replaceChildren();
+    const count = getCartQuantity();
+
+    if (cartCount) cartCount.textContent = String(count);
+    if (cartTrigger) {
+      cartTrigger.setAttribute('aria-label', `Ouvrir le panier, ${count} article${count > 1 ? 's' : ''}`);
+    }
+    if (cartEmpty) cartEmpty.hidden = cart.length > 0;
+    if (cartClear) cartClear.disabled = cart.length === 0;
+    if (checkoutWhatsapp) checkoutWhatsapp.disabled = cart.length === 0;
+
+    cart.forEach(entry => {
+      const product = findProduct(entry.id);
+      if (!product) return;
+
+      const item = document.createElement('article');
+      item.className = 'cart-item';
+      item.dataset.cartProduct = entry.id;
+
+      if (product.image) {
+        const image = document.createElement('img');
+        image.className = 'cart-item-image';
+        image.src = product.image;
+        image.alt = product.imageAlt || '';
+        image.loading = 'lazy';
+        image.addEventListener('error', () => {
+          const placeholder = document.createElement('div');
+          placeholder.className = 'cart-item-placeholder';
+          placeholder.textContent = 'N.';
+          image.replaceWith(placeholder);
+        }, { once: true });
+        item.appendChild(image);
+      } else {
+        const placeholder = document.createElement('div');
+        placeholder.className = 'cart-item-placeholder';
+        placeholder.textContent = 'N.';
+        item.appendChild(placeholder);
+      }
+
+      const main = document.createElement('div');
+      main.className = 'cart-item-main';
+      const title = document.createElement('h3');
+      title.className = 'cart-item-title';
+      title.textContent = product.title || 'Produit NACHA';
+      const weight = document.createElement('p');
+      weight.className = 'cart-item-weight';
+      weight.textContent = product.weight || '';
+      const price = document.createElement('p');
+      price.className = 'cart-item-price';
+      price.textContent = hasValidPrice(product)
+        ? `${formatPrice(product.price)} · Total : ${formatPrice(product.price * entry.quantity)}`
+        : 'Prix à renseigner';
+
+      const controls = document.createElement('div');
+      controls.className = 'cart-item-controls';
+      const quantity = document.createElement('div');
+      quantity.className = 'cart-quantity';
+      quantity.appendChild(makeCartButton('Diminuer la quantité', '−', 'decrease'));
+      const quantityValue = document.createElement('span');
+      quantityValue.textContent = String(entry.quantity);
+      quantity.appendChild(quantityValue);
+      quantity.appendChild(makeCartButton('Augmenter la quantité', '+', 'increase'));
+      const remove = makeCartButton(`Supprimer ${product.title || 'ce produit'} du panier`, 'Supprimer', 'remove', 'cart-item-remove');
+      controls.append(quantity, remove);
+      main.append(title, weight, price, controls);
+      item.appendChild(main);
+      cartItemsContainer.appendChild(item);
+    });
+
+    if (cart.length === 0) {
+      if (cartSubtotal) cartSubtotal.textContent = '—';
+    } else if (cartHasMissingPrices()) {
+      if (cartSubtotal) cartSubtotal.textContent = 'À confirmer';
+    } else if (cartSubtotal) {
+      cartSubtotal.textContent = formatPrice(getCartSubtotal());
+    }
+  };
+
+  const openCart = (returnFocus = document.activeElement) => {
+    if (!cartDrawer || !cartBackdrop) return;
+    cartReturnFocus = returnFocus;
+    cartBackdrop.hidden = false;
+    requestAnimationFrame(() => cartBackdrop.classList.add('is-visible'));
+    cartDrawer.classList.add('is-open');
+    cartDrawer.removeAttribute('inert');
+    cartDrawer.setAttribute('aria-hidden', 'false');
+    if (cartTrigger) cartTrigger.setAttribute('aria-expanded', 'true');
+    document.body.classList.add('cart-open');
+    if (cartClose) cartClose.focus({ preventScroll: true });
+  };
+
+  const closeCart = () => {
+    if (!cartDrawer || !cartBackdrop) return;
+    cartDrawer.classList.remove('is-open');
+    cartDrawer.setAttribute('aria-hidden', 'true');
+    cartDrawer.setAttribute('inert', '');
+    cartBackdrop.classList.remove('is-visible');
+    window.setTimeout(() => {
+      if (!cartDrawer.classList.contains('is-open')) cartBackdrop.hidden = true;
+    }, 320);
+    if (cartTrigger) cartTrigger.setAttribute('aria-expanded', 'false');
+    document.body.classList.remove('cart-open');
+    if (cartReturnFocus && typeof cartReturnFocus.focus === 'function') {
+      cartReturnFocus.focus({ preventScroll: true });
+    }
+  };
+
+  const addProductToCart = (product, index) => {
+    if (!product) return;
+    const id = getProductId(product, index);
+    const existing = cart.find(entry => entry.id === id);
+    if (existing) existing.quantity += 1;
+    else cart.push({ id, quantity: 1 });
+    saveCart();
+    renderCart();
+    setCartStatus(`${product.title || 'Produit NACHA'} ajouté au panier.`);
+    openCart(productAddToCartButton || cartTrigger);
+  };
+
+  if (productAddToCartButton) {
+    productAddToCartButton.addEventListener('click', () => {
+      const product = (config.products || [])[activeProduct];
+      addProductToCart(product, activeProduct);
+    });
+  }
+
+  cartTrigger?.addEventListener('click', () => {
+    if (cartDrawer?.classList.contains('is-open')) closeCart();
+    else openCart(cartTrigger);
+  });
+  cartClose?.addEventListener('click', closeCart);
+  cartBackdrop?.addEventListener('click', closeCart);
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && cartDrawer?.classList.contains('is-open')) closeCart();
+  });
+
+  cartItemsContainer?.addEventListener('click', event => {
+    const button = event.target.closest('button[data-cart-action]');
+    if (!button) return;
+    const row = button.closest('[data-cart-product]');
+    if (!row) return;
+    const entry = cart.find(item => item.id === row.dataset.cartProduct);
+    if (!entry) return;
+
+    if (button.dataset.cartAction === 'increase') entry.quantity += 1;
+    if (button.dataset.cartAction === 'decrease') {
+      if (entry.quantity <= 1) cart = cart.filter(item => item.id !== entry.id);
+      else entry.quantity -= 1;
+    }
+    if (button.dataset.cartAction === 'remove') cart = cart.filter(item => item.id !== entry.id);
+
+    saveCart();
+    renderCart();
+    setCartStatus('Panier mis à jour.');
+  });
+
+  cartClear?.addEventListener('click', () => {
+    cart = [];
+    saveCart();
+    renderCart();
+    setCartStatus('Le panier a été vidé.');
+  });
+
+  const transferOrderToWhatsApp = () => {
+    if (!cart.length) {
+      setCartStatus('Votre panier est vide.', true);
+      return;
+    }
+    if (cartHasMissingPrices()) {
+      setCartStatus('Configurez le prix de chaque produit dans config.js avant de confirmer la commande.', true);
+      return;
+    }
+
+    const whatsappNumber = String(config.whatsappBusinessNumber || '').replace(/\D/g, '');
+    if (!/^\d{8,15}$/.test(whatsappNumber)) {
+      setCartStatus('Le numéro WhatsApp Business doit être renseigné dans config.js au format international, chiffres uniquement.', true);
+      return;
+    }
+
+    const lines = cart.map(entry => {
+      const product = findProduct(entry.id);
+      return `• ${product.title || 'Produit NACHA'}${product.weight ? ` (${product.weight})` : ''} × ${entry.quantity} — ${formatPrice(product.price * entry.quantity)}`;
+    });
+    const message = [
+      'Bonjour NACHA, je souhaite confirmer la commande suivante :',
+      '',
+      ...lines,
+      '',
+      `Sous-total : ${formatPrice(getCartSubtotal())}`,
+      '',
+      'Merci de confirmer la disponibilité et les modalités de livraison.'
+    ].join('\n');
+    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+    setCartStatus('WhatsApp va s’ouvrir avec le récapitulatif. Envoyez le message pour transmettre la commande.');
+    const newWindow = window.open(whatsappUrl, '_blank');
+    if (newWindow) newWindow.opener = null;
+    else window.location.href = whatsappUrl;
+  };
+
+  checkoutWhatsapp?.addEventListener('click', transferOrderToWhatsApp);
+  renderCart();
+
+  // Carrousel automatique de l'image du footer uniquement.
   const footerCarousel = $('#footerImageCarousel');
   const footerCarouselImage = $('#footerCarouselImage');
   const footerCarouselPagination = $('#footerCarouselPagination');
-
   const footerSlides = (config.footerSlides || []).filter(Boolean);
-
   let activeFooterSlide = 0;
   let footerAutoplayTimer = null;
   let footerTransitionTimer = null;
-
   const FOOTER_AUTOPLAY_DELAY = 5000;
 
-  if (
-    footerCarousel &&
-    footerCarouselImage &&
-    footerCarouselPagination &&
-    footerSlides.length
-  ) {
+  if (footerCarousel && footerCarouselImage && footerCarouselPagination && footerSlides.length) {
     const footerDots = footerSlides.map((_, index) => {
       const dot = document.createElement('button');
-
       dot.type = 'button';
       dot.className = 'footer-carousel-dot';
       dot.setAttribute('aria-label', `Afficher l'image ${index + 1}`);
       dot.setAttribute('aria-pressed', 'false');
-
       dot.addEventListener('click', () => {
         showFooterSlide(index);
         startFooterAutoplay();
       });
-
       footerCarouselPagination.appendChild(dot);
-
       return dot;
     });
 
     const updateFooterPagination = () => {
       footerDots.forEach((dot, index) => {
         const selected = index === activeFooterSlide;
-
         dot.classList.toggle('is-active', selected);
         dot.setAttribute('aria-pressed', String(selected));
       });
     };
 
-    const showFooterSlide = (index) => {
-      activeFooterSlide =
-        ((index % footerSlides.length) + footerSlides.length) %
-        footerSlides.length;
-
+    const showFooterSlide = index => {
+      activeFooterSlide = ((index % footerSlides.length) + footerSlides.length) % footerSlides.length;
       const imagePath = footerSlides[activeFooterSlide];
-
       footerCarouselImage.classList.remove('is-visible');
-
-      if (footerTransitionTimer !== null) {
-        window.clearTimeout(footerTransitionTimer);
-      }
-
+      if (footerTransitionTimer !== null) window.clearTimeout(footerTransitionTimer);
       footerTransitionTimer = window.setTimeout(() => {
-        footerCarouselImage.onload = () => {
-          footerCarouselImage.classList.add('is-visible');
-        };
-
+        footerCarouselImage.onload = () => footerCarouselImage.classList.add('is-visible');
         footerCarouselImage.onerror = () => {
           footerCarouselImage.classList.remove('is-visible');
-          console.error(
-            `Impossible de charger l'image du footer : ${imagePath}`
-          );
+          console.error(`Impossible de charger l'image du footer : ${imagePath}`);
         };
-
         footerCarouselImage.src = imagePath;
-
-        if (
-          footerCarouselImage.complete &&
-          footerCarouselImage.naturalWidth > 0
-        ) {
+        if (footerCarouselImage.complete && footerCarouselImage.naturalWidth > 0) {
           footerCarouselImage.classList.add('is-visible');
         }
       }, 250);
-
       updateFooterPagination();
     };
 
@@ -360,45 +633,25 @@
 
     const startFooterAutoplay = () => {
       stopFooterAutoplay();
-
-      if (
-        footerSlides.length < 2 ||
-        prefersReducedMotion.matches
-      ) {
-        return;
-      }
-
+      if (footerSlides.length < 2 || prefersReducedMotion.matches) return;
       footerAutoplayTimer = window.setInterval(() => {
-        if (!document.hidden) {
-          showFooterSlide(activeFooterSlide + 1);
-        }
+        if (!document.hidden) showFooterSlide(activeFooterSlide + 1);
       }, FOOTER_AUTOPLAY_DELAY);
     };
 
-    // Synchroniser la pagination et l'image initiale.
     footerCarouselImage.src = footerSlides[0];
     footerCarouselImage.classList.add('is-visible');
     updateFooterPagination();
-
-    // Démarrer le défilement automatique.
     startFooterAutoplay();
 
-    // Suspendre le carrousel lorsque l'onglet est masqué.
     document.addEventListener('visibilitychange', () => {
-      if (document.hidden) {
-        stopFooterAutoplay();
-      } else {
-        startFooterAutoplay();
-      }
+      if (document.hidden) stopFooterAutoplay();
+      else startFooterAutoplay();
     });
 
-    // Respecter la préférence de réduction des animations.
-    prefersReducedMotion.addEventListener?.('change', (event) => {
-      if (event.matches) {
-        stopFooterAutoplay();
-      } else {
-        startFooterAutoplay();
-      }
+    prefersReducedMotion.addEventListener?.('change', event => {
+      if (event.matches) stopFooterAutoplay();
+      else startFooterAutoplay();
     });
   }
 
@@ -419,7 +672,6 @@
       anchor.setAttribute('tabindex', '-1');
     }
   });
-
   // En-tête discret au défilement et bouton de retour en haut.
   const siteHeader = $('#siteHeader');
   const backTop = $('#backTop');
@@ -431,10 +683,8 @@
   window.addEventListener('scroll', updateScrollState, { passive: true });
   updateScrollState();
   backTop?.addEventListener('click', () => window.scrollTo({ top: 0, behavior: prefersReducedMotion.matches ? 'auto' : 'smooth' }));
-
   const copyrightYear = $('#copyrightYear');
   if (copyrightYear) copyrightYear.textContent = String(new Date().getFullYear());
-
   // Les ancres restent natives, mais on ferme aussi le menu lors de changements de hash.
   window.addEventListener('hashchange', closeMenu);
 })();

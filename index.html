@@ -39,13 +39,10 @@
   <main id="contenu">
     <!-- 1. HERO : le logo et la navigation sont les seuls éléments superposés au carrousel. -->
     <section class="hero" id="accueil" aria-label="Univers visuel NACHA">
-      <div class="hero-backdrop" aria-hidden="true">
-        <div class="hero-orbit hero-orbit--one"></div>
-        <div class="hero-orbit hero-orbit--two"></div>
-        <img class="hero-pepper" src="piment_vert.jpg" alt="" fetchpriority="high">
-      </div>
+     
       <div class="hero-media" id="heroMedia" aria-hidden="true">
         <video id="heroVideo" class="hero-video" muted playsinline loop preload="none"></video>
+        <img id="heroImage" class="hero-image" alt="" decoding="async">
       </div>
 <header class="site-header" id="siteHeader">
   <a class="brand" href="#accueil" aria-label="NACHA, accueil">
@@ -58,6 +55,15 @@
           <a href="#apropos">À propos</a>
           <a href="#choix">Le choix Nacha</a>
         </nav>
+        <button class="cart-trigger" id="cartTrigger" type="button"
+                aria-label="Ouvrir le panier" aria-controls="cartDrawer" aria-expanded="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M3 4h2l2.1 11.1a2 2 0 0 0 2 1.6h7.8a2 2 0 0 0 1.9-1.4L21 8H6" />
+            <circle cx="10" cy="20" r="1" /><circle cx="18" cy="20" r="1" />
+          </svg>
+          <span class="cart-trigger-label">Panier</span>
+          <span class="cart-count" id="cartCount" aria-live="polite">0</span>
+        </button>
         <button class="menu-toggle" id="menuToggle" type="button" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="mobileNav">
           <span></span><span></span>
         </button>
@@ -76,6 +82,27 @@
       
       
     </section>
+
+    <!-- Panier e-commerce-->
+    <div class="cart-backdrop" id="cartBackdrop" hidden></div>
+    <aside class="cart-drawer" id="cartDrawer" role="dialog" aria-modal="true"
+           aria-labelledby="cartTitle" aria-hidden="true" inert>
+      <div class="cart-drawer-head">
+        <div>
+          <h2 id="cartTitle">Mon panier</h2>
+        </div>
+        <button type="button" class="cart-close" id="cartClose" aria-label="Fermer le panier">×</button>
+      </div>
+      <div class="cart-items" id="cartItems" aria-live="polite"></div>
+      <p class="cart-empty" id="cartEmpty">Votre panier est vide. Choisissez un produit dans la gamme NACHA pour commencer.</p>
+      <div class="cart-drawer-footer">
+        <button type="button" class="cart-clear" id="cartClear">Vider le panier</button>
+        <div class="cart-total-row"><span>Sous-total</span><strong id="cartSubtotal">—</strong></div>
+        <p class="cart-status" id="cartStatus" role="status" aria-live="polite"></p>
+        <button type="button" class="cart-checkout" id="checkoutWhatsapp">Confirmer la commande sur WhatsApp <span aria-hidden="true">↗</span></button>
+        <p class="cart-whatsapp-note">La commande sera préparée dans WhatsApp. Vous devrez envoyer le message pour la transmettre à NACHA.</p>
+      </div>
+    </aside>
 
     <!-- 2. LA GAMME NACHA -->
     <section class="collection section-ivory" id="gamme">
@@ -100,15 +127,22 @@
               <img class="stage-chili" src="piment_bocal_5.jpg" alt="" aria-hidden="true">
               <div class="asset-placeholder asset-placeholder--product">
               </div>
+              <button type="button" class="product-add-cart" id="productAddToCart"
+                      aria-label="Ajouter le produit sélectionné au panier" title="Ajouter au panier">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M3 4h2l2.1 11.1a2 2 0 0 0 2 1.6h7.8a2 2 0 0 0 1.9-1.4L21 8H6" />
+                  <circle cx="10" cy="20" r="1" /><circle cx="18" cy="20" r="1" />
+                  <path d="M14 9v4m-2-2h4" />
+                </svg>
+              </button>
             </div>
           </div>
           <div class="product-copy">
-            <p class="eyebrow">span id="productKicker">Le format découverte</span></p>
             <h2 id="productTitle">Petit format <em>60 g</em></h2>
-            <p id="productDescription">Un format compact de la gamme NACHA. La photographie officielle permettra de présenter fidèlement son emballage et ses détails.</p>
-            <div class="product-facts" id="productFacts"><span>Format 60 grammes</span><span>Emballage officiel requis</span></div>
+            <p id="productDescription">Un format compact de la gamme NACHA.</p>
+            <p class="product-price-line"><span>Prix</span><strong id="productPrice">15 000 FC</strong></p>
+            <div class="product-facts" id="productFacts"><span>Format 60 grammes</span></div>
             <div class="product-actions">
-              <a class="text-link" href="#contact-marque" id="productInfoLink">Informations sur la marque <span aria-hidden="true">↗</span></a>
               <div class="product-arrows">
                 <button type="button" class="round-arrow" id="productPrev" aria-label="Produit précédent">←</button>
                 <button type="button" class="round-arrow round-arrow--filled" id="productNext" aria-label="Produit suivant">→</button>
@@ -139,7 +173,7 @@
           </div>
           <div class="process-copy reveal" data-reveal>
             <span class="step-index">Étape 01 </span>
-            <h3>La <em>récolte.</em></h3>
+            <h3>La <em>récolte</em></h3>
             <p>C'est au cœur de la province du Kwilu, en République démocratique du Congo, que notre piment prend ses racines.</p>
             <p>De sa récolte à son conditionnement, il traverse différentes étapes de préparation. Chacune est réalisée avec soin pour préserver ses arômes, sa couleur et toute la richesse de son goût.</p>
           </div>
@@ -152,7 +186,7 @@
           </div>
           <div class="process-copy reveal" data-reveal>
             <span class="step-index">Étape 02</span>
-            <h3>La <em>sélection.</em></h3>
+            <h3>La <em>sélection</em></h3>
             <p>Après la récolte, les piments sont soigneusement sélectionnés.</p>
             <p>Cette étape permet de retenir les plus beaux fruits et d'assurer une base de qualité pour la suite du processus de transformation.</p>
           </div>
@@ -164,7 +198,7 @@
           </div>
           <div class="process-copy reveal" data-reveal>
             <span class="step-index">Étape 03</span>
-            <h3>De Kikwit <em>à Kinshasa.</em></h3>
+            <h3>De Kikwit <em>à Kinshasa</em></h3>
             <p>Après 12 jours de séchage, les piments entament un voyage de 512 km vers Kinshasa.</p>
             <p>Cette méthode permet de préserver les qualités organoleptiques du piment : son goût, ses arômes et sa couleur, tout en favorisant une conservation de longue durée.</p>
           </div>
@@ -177,7 +211,7 @@
           </div>
           <div class="process-copy reveal" data-reveal>
             <span class="step-index">Étape 04</span>
-            <h3>La <em>mouture.</em></h3>
+            <h3>La <em>mouture</em></h3>
             <p>Une fois parfaitement séché, le piment est moulu avec soin.</p>
             <p>Après séchage, le piment est moulu, tamisé trois fois et débarrassé de toute impureté pour garantir une qualité optimale.</p>
           </div>
@@ -190,7 +224,7 @@
           </div>
           <div class="process-copy reveal" data-reveal>
             <span class="step-index">Étape 05</span>
-            <h3>Le résultat <em>final.</em></h3>
+            <h3>Le résultat <em>final</em></h3>
             <p>Le produit fini révèle toute l'essence de Nacha.</p>
             <p>Un piment authentique, issu d'un savoir-faire congolais et soigneusement travaillé à chaque étape de sa préparation.</p>
             <p>De la sélection des ingrédients au conditionnement final, NACHA met la qualité et le goût à l'honneur pour apporter à chaque repas une touche de saveur africaine intense, raffinée et pleine de caractère.</p>
@@ -220,8 +254,7 @@
     <section class="reasons" id="choix">
       <div class="section-shell">
         <div class="reasons-heading reveal" data-reveal>
-          <div><p class="eyebrow eyebrow--light">Ce qui nous caractérise</p><h2>Le choix <em>Nacha.</em></h2></div>
-          <p>Une identité construite autour de ses origines, d'une préparation attentive et du goût.</p>
+          <div><p class="eyebrow eyebrow--light">Ce qui nous caractérise</p><h2>Le choix <em>Nacha</em></h2></div>
         </div>
         <div class="reason-list">
           <article class="reason-card reveal" data-reveal>
@@ -272,7 +305,7 @@
 </div>
         <div class="footer-feature-content reveal" data-reveal>
           <p class="eyebrow eyebrow--light">La signature des saveurs</p>
-          <h2>Du caractère <em>dans chaque saveur.</em></h2>
+          <h2>Du caractère <em>dans chaque saveur</em></h2>
           <a class="footer-cta" href="#gamme">Découvrir nos produits <span aria-hidden="true">↗</span></a>
         </div>
       </div>
