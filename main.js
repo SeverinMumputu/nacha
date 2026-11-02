@@ -52,7 +52,13 @@
   } else {
     revealItems.forEach(item => item.classList.add('is-revealed'));
   }
-  // Carrousel Hero : lecture automatique des images et des vidéos configurées dans config.js.
+
+  
+  // =====================================================
+  // NACHA — HERO CAROUSEL
+  // GESTION DES IMAGES, VIDÉOS ET SWIPE MANUEL
+  // =====================================================
+
   const hero = $('.hero');
   const heroVideo = $('#heroVideo');
   const heroImage = $('#heroImage');
@@ -60,369 +66,640 @@
   const heroDots = [];
   const heroCurrent = $('#heroCurrent');
 
+  // Désactiver définitivement la boucle des vidéos.
+  if (heroVideo) {
+    heroVideo.loop = false;
+    heroVideo.removeAttribute('loop');
+  }
+
   let activeSlide = 0;
   let heroAutoplayTimer = null;
+  let heroSlideRevision = 0;
 
-  const HERO_AUTOPLAY_DELAY = 8000;
-  const slides = (config.heroSlides || []).filter(slide => slide && (slide.video || slide.image));
+  const HERO_IMAGE_AUTOPLAY_DELAY = 8000;
 
-  // Générer autant d'indicateurs que de médias configurés.
+  const slides = (config.heroSlides || []).filter(
+    slide => slide && (slide.video || slide.image)
+  );
+
+
+  // =====================================================
+  // 1. PAGINATION
+  // =====================================================
+
   if (heroPagination) {
     heroPagination.replaceChildren();
+
     slides.forEach((slide, index) => {
       const dot = document.createElement('button');
+
       dot.type = 'button';
       dot.className = `hero-dot${index === 0 ? ' is-active' : ''}`;
       dot.setAttribute('aria-label', slide.label || `Séquence ${index + 1}`);
       dot.setAttribute('aria-pressed', String(index === 0));
+
       dot.disabled = true;
       dot.tabIndex = -1;
+
       const indicator = document.createElement('span');
       indicator.setAttribute('aria-hidden', 'true');
+
       dot.appendChild(indicator);
       heroPagination.appendChild(dot);
+
       heroDots.push(dot);
     });
   }
 
-  const applySlide = index => {
-    if (!slides.length || !hero) return;
 
-    activeSlide = (index + slides.length) % slides.length;
+  // =====================================================
+  // 2. CHRONOMÉTRAGE DES IMAGES
+  // =====================================================
+
+  const stopHeroAutoplay = () => {
+
+    if (heroAutoplayTimer !== null) {
+      window.clearTimeout(heroAutoplayTimer);
+      heroAutoplayTimer = null;
+    }
+
+  };
+
+
+  const startHeroAutoplay = () => {
+
+    stopHeroAutoplay();
+
+    if (
+      slides.length < 2 ||
+      prefersReducedMotion.matches ||
+      document.hidden
+    ) {
+      return;
+    }
+
     const slide = slides[activeSlide];
 
-    hero.classList.remove('hero-scene--one', 'hero-scene--two', 'hero-scene--three');
-    hero.classList.add(slide.theme || `hero-scene--${['one', 'two', 'three'][activeSlide % 3]}`);
+    // Les vidéos ne possèdent aucun chronomètre fixe.
+    if (!slide || slide.video) return;
 
+    // Vérifier que l'image active est réellement chargée.
+    if (
+      !heroImage ||
+      !slide.image ||
+      heroImage.getAttribute('data-current-source') !== slide.image ||
+      !heroImage.complete ||
+      heroImage.naturalWidth === 0 ||
+      !heroImage.classList.contains('is-visible')
+    ) {
+      return;
+    }
+
+    const scheduledSlide = activeSlide;
+    const scheduledRevision = heroSlideRevision;
+    const scheduledSource = slide.image;
+
+    heroAutoplayTimer = window.setTimeout(() => {
+
+      heroAutoplayTimer = null;
+
+      // Protection contre les anciennes transitions.
+      if (
+        document.hidden ||
+        activeSlide !== scheduledSlide ||
+        heroSlideRevision !== scheduledRevision ||
+        slides[activeSlide]?.image !== scheduledSource
+      ) {
+        return;
+      }
+
+      applySlide(scheduledSlide + 1);
+
+    }, HERO_IMAGE_AUTOPLAY_DELAY);
+
+  };
+
+
+  // =====================================================
+  // 3. FONCTION CENTRALE DE CHANGEMENT DE SÉQUENCE
+  // =====================================================
+
+  const applySlide = index => {
+
+    if (!slides.length || !hero) return;
+
+    stopHeroAutoplay();
+
+    const revision = ++heroSlideRevision;
+
+    activeSlide = (index + slides.length) % slides.length;
+
+    const slide = slides[activeSlide];
+
+    hero.classList.remove(
+      'hero-scene--one',
+      'hero-scene--two',
+      'hero-scene--three'
+    );
+
+    hero.classList.add(
+      slide.theme ||
+      `hero-scene--${['one', 'two', 'three'][activeSlide % 3]}`
+    );
+
+
+    // Synchronisation de la pagination.
     heroDots.forEach((dot, dotIndex) => {
+
       const selected = dotIndex === activeSlide;
+
       dot.classList.toggle('is-active', selected);
       dot.setAttribute('aria-pressed', String(selected));
+
     });
 
     if (heroCurrent) {
       heroCurrent.textContent = String(activeSlide + 1).padStart(2, '0');
     }
 
-    // Une entrée vidéo utilise le lecteur existant ; une entrée image utilise #heroImage.
+
     const nextVideo = slide.video || '';
     const nextImage = nextVideo ? '' : (slide.image || '');
 
+
+    // =================================================
+    // 3A. GESTION DES VIDÉOS
+    // =================================================
+
     if (heroVideo) {
-      const currentVideo = heroVideo.getAttribute('data-current-source') || '';
+
+      const currentVideo =
+        heroVideo.getAttribute('data-current-source') || '';
 
       if (nextVideo !== currentVideo) {
+
         heroVideo.pause();
         heroVideo.classList.remove('is-visible');
+
         heroVideo.removeAttribute('src');
         heroVideo.removeAttribute('data-current-source');
         heroVideo.removeAttribute('poster');
 
         if (nextVideo) {
-          if (slide.poster) heroVideo.setAttribute('poster', slide.poster);
+
+          heroVideo.loop = false;
+          heroVideo.removeAttribute('loop');
+
+          if (slide.poster) {
+            heroVideo.setAttribute('poster', slide.poster);
+          }
+
           heroVideo.setAttribute('data-current-source', nextVideo);
           heroVideo.src = nextVideo;
+
           heroVideo.load();
-          if (!prefersReducedMotion.matches) {
-            heroVideo.play().catch(() => {});
+
+          if (!prefersReducedMotion.matches && !document.hidden) {
+
+            heroVideo.play().catch(error => {
+              console.warn('Lecture automatique de la vidéo impossible :', error);
+            });
+
           }
+
         } else {
+
           heroVideo.load();
+
         }
-      } else if (nextVideo && !prefersReducedMotion.matches && heroVideo.paused) {
-        heroVideo.play().catch(() => {});
+
+      } else if (
+        nextVideo &&
+        !prefersReducedMotion.matches &&
+        !document.hidden &&
+        heroVideo.paused &&
+        !heroVideo.ended
+      ) {
+
+        heroVideo.play().catch(error => {
+          console.warn('Lecture automatique de la vidéo impossible :', error);
+        });
+
       }
+
     }
 
+
+    // =================================================
+    // 3B. GESTION DES IMAGES
+    // =================================================
+
     if (heroImage) {
-      const currentImage = heroImage.getAttribute('data-current-source') || '';
+
+      const currentImage =
+        heroImage.getAttribute('data-current-source') || '';
 
       if (nextImage !== currentImage) {
+
         heroImage.classList.remove('is-visible');
+
         heroImage.onload = null;
         heroImage.onerror = null;
+
         heroImage.removeAttribute('src');
         heroImage.removeAttribute('data-current-source');
 
+
         if (nextImage) {
+
+          // Chargement de la nouvelle image.
           heroImage.onload = () => {
-            if (heroImage.getAttribute('data-current-source') === nextImage && slides[activeSlide]?.image === nextImage) {
-              heroImage.classList.add('is-visible');
+
+            if (
+              revision !== heroSlideRevision ||
+              heroImage.getAttribute('data-current-source') !== nextImage ||
+              slides[activeSlide]?.image !== nextImage
+            ) {
+              return;
             }
+
+            heroImage.classList.add('is-visible');
+
+            // Démarrer les 8 secondes après le chargement.
+            startHeroAutoplay();
+
           };
+
+
+          // Gestion des erreurs de chargement.
           heroImage.onerror = () => {
-            if (heroImage.getAttribute('data-current-source') === nextImage) {
-              heroImage.classList.remove('is-visible');
-              heroImage.removeAttribute('src');
-              heroImage.removeAttribute('data-current-source');
-              console.error(`Impossible de charger l'image du Hero : ${nextImage}`);
+
+            if (
+              revision !== heroSlideRevision ||
+              heroImage.getAttribute('data-current-source') !== nextImage
+            ) {
+              return;
             }
+
+            heroImage.classList.remove('is-visible');
+
+            heroImage.removeAttribute('src');
+            heroImage.removeAttribute('data-current-source');
+
+            console.error(
+              `Impossible de charger l'image du Hero : ${nextImage}`
+            );
+
           };
+
+
           heroImage.setAttribute('data-current-source', nextImage);
           heroImage.src = nextImage;
+
+
+          // Image déjà présente dans le cache.
           if (heroImage.complete && heroImage.naturalWidth > 0) {
+
             heroImage.classList.add('is-visible');
+            startHeroAutoplay();
+
           }
+
         }
-      } else if (nextImage && heroImage.complete && heroImage.naturalWidth > 0) {
+
+      } else if (
+        nextImage &&
+        heroImage.complete &&
+        heroImage.naturalWidth > 0
+      ) {
+
         heroImage.classList.add('is-visible');
+        startHeroAutoplay();
+
       }
+
     }
+
   };
+
+
+  // =====================================================
+  // 4. ÉVÉNEMENTS VIDÉO
+  // =====================================================
 
   if (heroVideo) {
+
+    // La vidéo devient visible dès qu'elle est prête.
     heroVideo.addEventListener('canplay', () => {
+
       const currentSlide = slides[activeSlide];
-      if (currentSlide?.video && currentSlide.video === heroVideo.getAttribute('data-current-source')) {
+
+      if (
+        currentSlide?.video &&
+        currentSlide.video === heroVideo.getAttribute('data-current-source')
+      ) {
+
         heroVideo.classList.add('is-visible');
+
       }
+
     });
 
-    heroVideo.addEventListener('error', () => {
+
+    // Passage à la séquence suivante à la fin réelle.
+    heroVideo.addEventListener('ended', () => {
+
       const currentSlide = slides[activeSlide];
-      const currentSource = heroVideo.getAttribute('data-current-source');
-      if (!currentSource || currentSlide?.video !== currentSource) return;
-      heroVideo.classList.remove('is-visible');
-      heroVideo.removeAttribute('src');
-      heroVideo.removeAttribute('data-current-source');
-    });
-  }
 
-  const stopHeroAutoplay = () => {
-    if (heroAutoplayTimer !== null) {
-      window.clearInterval(heroAutoplayTimer);
-      heroAutoplayTimer = null;
-    }
-  };
+      const currentSource =
+        heroVideo.getAttribute('data-current-source');
 
-  const startHeroAutoplay = () => {
-    stopHeroAutoplay();
-    if (slides.length < 2 || prefersReducedMotion.matches) return;
-    heroAutoplayTimer = window.setInterval(() => {
-      if (!document.hidden) applySlide(activeSlide + 1);
-    }, HERO_AUTOPLAY_DELAY);
-  };
-
-  /* =====================================================
-   NACHA — HERO CAROUSEL
-   NAVIGATION MANUELLE PAR SWIPE / DRAG
-   ===================================================== */
-
-if (hero && slides.length > 1) {
-
-  const HERO_SWIPE_THRESHOLD = 58;
-  const HERO_SWIPE_MIN_DISTANCE = 32;
-  const HERO_SWIPE_MIN_VELOCITY = 0.45;
-
-  let heroSwipe = null;
-
-  /*
-   * Début du geste :
-   * On ignore les éléments interactifs pour ne pas
-   * perturber la navigation, le menu ou le panier.
-   */
-
-  hero.addEventListener('pointerdown', event => {
-
-    if (!event.isPrimary) return;
-
-    if (event.pointerType === 'mouse' && event.button !== 0) {
-      return;
-    }
-
-    if (heroSwipe !== null) return;
-
-    const target = event.target;
-
-    if (
-      target instanceof Element &&
-      target.closest(
-        'a, button, input, textarea, select, ' +
-        '[contenteditable="true"], ' +
-        '.site-header, .mobile-nav, .hero-pagination'
-      )
-    ) {
-      return;
-    }
-
-    heroSwipe = {
-      pointerId: event.pointerId,
-      startX: event.clientX,
-      startY: event.clientY,
-      startTime: 0,
-      dragging: false
-    };
-
-    /*
-     * Maintenir le suivi du pointeur même lorsque
-     * le curseur sort temporairement du Hero.
-     */
-
-    try {
-      hero.setPointerCapture(event.pointerId);
-    } catch (_) {}
-
-  });
-
-  /*
-   * Détection du déplacement horizontal.
-   */
-
-  hero.addEventListener('pointermove', event => {
-
-    if (!heroSwipe) return;
-
-    if (event.pointerId !== heroSwipe.pointerId) return;
-
-    const deltaX = event.clientX - heroSwipe.startX;
-    const deltaY = event.clientY - heroSwipe.startY;
-
-    const distanceX = Math.abs(deltaX);
-    const distanceY = Math.abs(deltaY);
-
-    /*
-     * Attendre que la direction du geste soit identifiable.
-     */
-
-    if (!heroSwipe.dragging) {
-
-      if (distanceX < 10 && distanceY < 10) return;
-
-      /*
-       * Un mouvement principalement vertical correspond
-       * au défilement normal de la page.
-       */
-
-      if (distanceY > distanceX) {
-        heroSwipe = null;
+      if (
+        !currentSlide?.video ||
+        currentSlide.video !== currentSource ||
+        !heroVideo.ended
+      ) {
         return;
       }
 
-      /*
-       * Le geste horizontal commence réellement.
-       */
+      applySlide(activeSlide + 1);
 
-      heroSwipe.dragging = true;
-      heroSwipe.startTime = performance.now();
+    });
 
-      /*
-       * Suspendre temporairement le carrousel automatique.
-       */
 
-      stopHeroAutoplay();
+    // Erreur de lecture.
+    heroVideo.addEventListener('error', () => {
 
-      hero.classList.add('is-swipe-active');
+      const currentSlide = slides[activeSlide];
 
-    }
+      const currentSource =
+        heroVideo.getAttribute('data-current-source');
 
-  });
+      if (
+        !currentSource ||
+        currentSlide?.video !== currentSource
+      ) {
+        return;
+      }
 
-  /*
-   * Fin du geste :
-   * Gauche = média suivant.
-   * Droite = média précédent.
-   */
+      heroVideo.classList.remove('is-visible');
 
-  const finishHeroSwipe = (event, cancelled = false) => {
-
-    if (!heroSwipe) return;
-
-    if (event.pointerId !== heroSwipe.pointerId) return;
-
-    const gesture = heroSwipe;
-
-    heroSwipe = null;
-
-    if (!gesture.dragging) return;
-
-    const deltaX = event.clientX - gesture.startX;
-
-    const distance = Math.abs(deltaX);
-
-    const duration = Math.max(
-      1,
-      performance.now() - gesture.startTime
-    );
-
-    const velocity = distance / duration;
-
-    /*
-     * Accepter un déplacement suffisamment long
-     * ou un mouvement court mais rapide.
-     */
-
-    const validSwipe =
-      distance >= HERO_SWIPE_THRESHOLD ||
-      (
-        distance >= HERO_SWIPE_MIN_DISTANCE &&
-        velocity >= HERO_SWIPE_MIN_VELOCITY
+      console.error(
+        `Impossible de charger la vidéo du Hero : ${currentSource}`
       );
 
-    hero.classList.remove('is-swipe-active');
+    });
 
-    if (!cancelled && validSwipe) {
+  }
 
-      if (deltaX < 0) {
 
-        // Glissement vers la gauche : média suivant.
-        applySlide(activeSlide + 1);
+  // =====================================================
+  // 5. NAVIGATION MANUELLE — SWIPE / DRAG
+  // =====================================================
+
+  if (hero && slides.length > 1) {
+
+    const HERO_SWIPE_THRESHOLD = 58;
+    const HERO_SWIPE_MIN_DISTANCE = 32;
+    const HERO_SWIPE_MIN_VELOCITY = 0.45;
+
+    let heroSwipe = null;
+
+
+    // Début du geste.
+    hero.addEventListener('pointerdown', event => {
+
+      if (!event.isPrimary) return;
+
+      if (event.pointerType === 'mouse' && event.button !== 0) {
+        return;
+      }
+
+      if (heroSwipe !== null) return;
+
+      const target = event.target;
+
+      if (
+        target instanceof Element &&
+        target.closest(
+          'a, button, input, textarea, select, ' +
+          '[contenteditable="true"], ' +
+          '.site-header, .mobile-nav, .hero-pagination'
+        )
+      ) {
+        return;
+      }
+
+      heroSwipe = {
+        pointerId: event.pointerId,
+        startX: event.clientX,
+        startY: event.clientY,
+        startTime: 0,
+        dragging: false
+      };
+
+      try {
+        hero.setPointerCapture(event.pointerId);
+      } catch (_) {}
+
+    });
+
+
+    // Détection du mouvement.
+    hero.addEventListener('pointermove', event => {
+
+      if (!heroSwipe) return;
+
+      if (event.pointerId !== heroSwipe.pointerId) return;
+
+      const deltaX = event.clientX - heroSwipe.startX;
+      const deltaY = event.clientY - heroSwipe.startY;
+
+      const distanceX = Math.abs(deltaX);
+      const distanceY = Math.abs(deltaY);
+
+      if (!heroSwipe.dragging) {
+
+        if (distanceX < 10 && distanceY < 10) return;
+
+        // Ne pas perturber le défilement vertical.
+        if (distanceY > distanceX) {
+          heroSwipe = null;
+          return;
+        }
+
+        heroSwipe.dragging = true;
+        heroSwipe.startTime = performance.now();
+
+        stopHeroAutoplay();
+
+        hero.classList.add('is-swipe-active');
+
+      }
+
+    });
+
+
+    // Finalisation du geste.
+    const finishHeroSwipe = (event, cancelled = false) => {
+
+      if (!heroSwipe) return;
+
+      if (event.pointerId !== heroSwipe.pointerId) return;
+
+      const gesture = heroSwipe;
+
+      heroSwipe = null;
+
+      if (!gesture.dragging) return;
+
+      const deltaX = event.clientX - gesture.startX;
+
+      const distance = Math.abs(deltaX);
+
+      const duration = Math.max(
+        1,
+        performance.now() - gesture.startTime
+      );
+
+      const velocity = distance / duration;
+
+      const validSwipe =
+        distance >= HERO_SWIPE_THRESHOLD ||
+        (
+          distance >= HERO_SWIPE_MIN_DISTANCE &&
+          velocity >= HERO_SWIPE_MIN_VELOCITY
+        );
+
+      hero.classList.remove('is-swipe-active');
+
+      if (!cancelled && validSwipe) {
+
+        // Gauche : suivant. Droite : précédent.
+        applySlide(activeSlide + (deltaX < 0 ? 1 : -1));
 
       } else {
 
-        // Glissement vers la droite : média précédent.
-        applySlide(activeSlide - 1);
+        // Si le média n'a pas changé, reprendre son fonctionnement.
+        startHeroAutoplay();
 
       }
 
-    }
+    };
 
-    /*
-     * Reprendre la lecture automatique avec un
-     * nouveau délai après l'interaction manuelle.
-     */
 
-    startHeroAutoplay();
+    hero.addEventListener('pointerup', event => {
+      finishHeroSwipe(event);
+    });
 
-  };
+    hero.addEventListener('pointercancel', event => {
+      finishHeroSwipe(event, true);
+    });
 
-  /*
-   * Terminaison normale du geste.
-   */
+    hero.addEventListener('lostpointercapture', event => {
+      finishHeroSwipe(event, true);
+    });
 
-  hero.addEventListener('pointerup', event => {
-    finishHeroSwipe(event);
-  });
+  }
 
-  /*
-   * Annulation : notamment lors d'un défilement
-   * vertical ou d'une interruption du pointeur.
-   */
 
-  hero.addEventListener('pointercancel', event => {
-    finishHeroSwipe(event, true);
-  });
+  // =====================================================
+  // 6. INITIALISATION DU CARROUSEL
+  // =====================================================
 
-  hero.addEventListener('lostpointercapture', event => {
-    finishHeroSwipe(event, true);
-  });
-
-}
-
-  // Afficher le premier média puis faire défiler images et vidéos automatiquement.
+  // Le premier média gère lui-même le démarrage de son cycle.
   applySlide(0);
-  startHeroAutoplay();
+
+
+  // =====================================================
+  // 7. GESTION DES PRÉFÉRENCES DE MOUVEMENT
+  // =====================================================
 
   prefersReducedMotion.addEventListener?.('change', event => {
+
+    const currentSlide = slides[activeSlide];
+
     if (event.matches) {
+
       if (heroVideo) heroVideo.pause();
+
       stopHeroAutoplay();
-    } else {
-      const currentSlide = slides[activeSlide];
-      if (heroVideo && currentSlide?.video && heroVideo.getAttribute('src')) {
-        heroVideo.play().catch(() => {});
-      }
-      startHeroAutoplay();
+
+      return;
+
     }
+
+    if (currentSlide?.video) {
+
+      if (
+        heroVideo &&
+        heroVideo.getAttribute('data-current-source') === currentSlide.video &&
+        heroVideo.paused &&
+        !heroVideo.ended &&
+        !document.hidden
+      ) {
+
+        heroVideo.play().catch(error => {
+          console.warn('Lecture vidéo impossible :', error);
+        });
+
+      }
+
+    } else {
+
+      startHeroAutoplay();
+
+    }
+
+  });
+
+
+  // =====================================================
+  // 8. GESTION DE LA VISIBILITÉ DE LA PAGE
+  // =====================================================
+
+  document.addEventListener('visibilitychange', () => {
+
+    const currentSlide = slides[activeSlide];
+
+    if (document.hidden) {
+
+      stopHeroAutoplay();
+
+      if (
+        currentSlide?.video &&
+        heroVideo &&
+        !heroVideo.paused
+      ) {
+        heroVideo.pause();
+      }
+
+      return;
+
+    }
+
+    if (currentSlide?.video) {
+
+      if (
+        heroVideo &&
+        heroVideo.getAttribute('data-current-source') === currentSlide.video &&
+        heroVideo.paused &&
+        !heroVideo.ended &&
+        !prefersReducedMotion.matches
+      ) {
+
+        heroVideo.play().catch(error => {
+          console.warn('Reprise automatique de la vidéo impossible :', error);
+        });
+
+      }
+
+    } else {
+
+      startHeroAutoplay();
+
+    }
+
   });
 
   // Présentation interactive des quatre produits : chaque visuel reste vide tant que le pack officiel n'est pas fourni.
@@ -881,7 +1158,7 @@ if (hero && slides.length > 1) {
   const siteHeader = $('#siteHeader');
   const backTop = $('#backTop');
   const updateScrollState = () => {
-    const scrolled = window.scrollY > 30;
+  const scrolled = window.scrollY > 30;
     if (siteHeader) siteHeader.classList.toggle('is-scrolled', scrolled);
     if (backTop) backTop.classList.toggle('is-visible', window.scrollY > 650);
   };
