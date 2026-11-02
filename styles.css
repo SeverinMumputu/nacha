@@ -132,7 +132,7 @@ button { font: inherit; }
 
 .hero-scene--three .hero-pepper { transform: translate(-50%,-50%) rotate(19deg) scale(1.05); }
 
-.hero-video, .hero-image { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;}
+.hero-video, .hero-image { position: absolute; inset: 0; width: 100%; height: 100%; object-fit:cover;}
 
 .hero-video.is-visible, .hero-image.is-visible { opacity: 1; }
 
@@ -208,15 +208,9 @@ button { font: inherit; }
 
 .product-stage { position: relative; min-height: 640px; padding: 25px 29px 21px; background: var(--wine); color: var(--ivory); overflow: hidden; isolation: isolate; transition: background .5s; }
 
-.product-stage::before { content: ''; position: absolute; z-index: -1; inset: 0; background: radial-gradient(ellipse at 50% 45%, rgba(210,132,2,.16), transparent 57%), linear-gradient(150deg, rgba(255,248,240,.04), transparent 45%); }
+.product-stage::before { content: ''; position: absolute; z-index: -1; inset: 0; background-color: var(--ivory) }
 
-.product-tone--red .product-stage, .product-stage.product-tone--red { background: #6C080D; }
 
-.product-stage.product-tone--green { background: #423B20; }
-
-.product-stage.product-tone--portable { background: #4B0309; }
-
-.product-stage.product-tone--small { background: var(--wine); }
 
 .stage-topline, .stage-bottomline { position: relative; z-index: 5; display: flex; justify-content: space-between; align-items: center; font-size: 8px; letter-spacing: .19em; }
 
@@ -230,13 +224,7 @@ button { font: inherit; }
 
 .product-stage-art { position: absolute; inset: 65px 0 60px; display: grid; place-items: center; overflow: hidden; }
 
-.visual-orbit { position: absolute; width: min(75%, 410px); aspect-ratio: 1; border: 1px solid rgba(241,182,79,.22); border-radius: 50%; }
-
-.visual-orbit--a { box-shadow: 0 0 0 35px rgba(241,182,79,.025), 0 0 0 70px rgba(241,182,79,.02); }
-
-.visual-orbit--b { width: min(57%, 310px); border-color: rgba(255,248,240,.1); }
-
-.stage-chili { position: absolute; width: min(46%, 220px); max-height: 90%; object-fit: contain; opacity: .43; filter: saturate(.9); transform: rotate(18deg) translate(-48px, -4px); transition: transform .8s var(--ease); }
+.stage-chili { position: absolute; width:100%; height: 100%;  transition: transform .8s var(--ease); }
 
 .product-stage.product-switching .stage-chili { transform: rotate(4deg) translate(38px, -8px) scale(.95); }
 
@@ -336,23 +324,23 @@ button { font: inherit; }
 
 .process-step--reverse .process-copy { order: 1; }
 
-.process-visual { position: relative; min-height: 470px; overflow: hidden; background: #410107; isolation: isolate; }
+.process-visual { position: relative; min-height: 470px; overflow: hidden;  isolation: isolate; }
 
-.process-visual::before { position: absolute; inset: 0; content: ''; background: linear-gradient(130deg, rgba(255,248,240,.06), transparent 44%, rgba(0,0,0,.2)); }
+.process-visual::before { position: absolute; inset: 0; content: ''; }
 
-.process-visual--harvest { background: radial-gradient(ellipse at 55% 45%, #80311a, #4c060c 70%); }
+.process-visual--harvest { background-color:none;}
 
-.process-visual--selection { background: radial-gradient(ellipse at 43% 50%, #6f341c, #300005 73%); }
+.process-visual--selection { background:none;}
 
-.process-visual--journey { background: #4a050a; }
+.process-visual--journey { background: none; }
 
-.process-visual--grind { background: radial-gradient(ellipse at 56% 40%, #a96d2e, #4d090b 70%); }
+.process-visual--grind { background: none; }
 
-.process-visual--final { background: radial-gradient(ellipse at 50% 48%, #87120f, #360005 74%); }
+.process-visual--final { background: none; }
 
 .process-visual-art { position: absolute; inset: 0; display: grid; place-items: center; }
 
-.process-visual-art img { position: relative; z-index: 1; width: 60%; opacity: .6; }
+.process-visual-art img { position: relative; z-index: 1; width: 60%; border-radius: 10%; }
 
 .process-sun { position: absolute; width: 70%; aspect-ratio: 1; border: 1px solid rgba(241,182,79,.24); border-radius: 50%; box-shadow: 0 0 0 30px rgba(241,182,79,.025), 0 0 0 65px rgba(241,182,79,.02); }
 
@@ -848,13 +836,17 @@ button { font: inherit; }
 
   .collection { padding: 78px 0 82px; }.section-heading h1 { font-size: 54px; }.heading-intro { font-size: 13px; }
 
-  .product-stage { height: 445px; min-height: 0; padding: 19px 17px; }.product-stage-art { inset-block: 56px 53px; }.visual-orbit { width: 84%; }.visual-orbit--b { width: 63%; }.stage-topline, .stage-bottomline { font-size: 7px; }.stage-mark { font-size: 28px; }.asset-placeholder { width: 80%; min-height: 115px; padding: 15px; }.asset-placeholder strong { font-size: 10px; }.asset-placeholder > span:last-child { font-size: 8px; }
+  .product-stage { height: 445px; min-height: 0; padding: 19px 17px; }.product-stage-art { inset-block: 56px 53px; }.stage-topline, .stage-bottomline { font-size: 7px; }.stage-mark { font-size: 28px; }.asset-placeholder { width: 80%; min-height: 115px; padding: 15px; }.asset-placeholder strong { font-size: 10px; }.asset-placeholder > span:last-child { font-size: 8px; }
 
   .product-copy h2 { font-size: 45px; }.product-copy > p:not(.eyebrow) { font-size: 13px; }.product-facts { margin: 20px 0 26px; }.product-actions { align-items: start; }.text-link { max-width: 190px; font-size: 10px; }.round-arrow { width: 37px; height: 37px; }.product-selector { margin-top: 20px; }.product-option { grid-template-columns: 20px 1fr 14px; min-height: 76px; padding: 12px 8px; gap: 7px; }.product-option strong { font-size: 13px; }.product-option small { font-size: 15px; }
 
   .production-intro { padding-top: 80px; padding-bottom: 50px; }.section-ghost-number { font-size: 90px; }.production-title { font-size: 48px; margin: 18px 0 34px; }.production-intro-bottom { align-items: start; }.production-intro-bottom p { font-size: 15px; }.scroll-cue { max-width: 130px; font-size: 8px; line-height: 1.6; }
 
-  .process-step, .process-step--reverse { width: calc(100% - 36px); padding: 38px 0; gap: 24px; }.process-visual { min-height: 350px; }.asset-caption { left: 13px; right: 13px; bottom: 13px; font-size: 7px; }.asset-caption b { font-size: 7px; }.process-copy h3 { font-size: 47px; margin-bottom: 20px; }.process-copy p { font-size: 15px; }.step-index { margin-bottom: 23px; }.journey-label { font-size: 15px; }.journey-stats { gap: 15px; padding: 13px 8px; }.journey-stats strong { font-size: 24px; }.journey-stats small { font-size: 7px; }.final-seal { width: 75px; height: 75px; font-size: 32px; }
+  .process-step, .process-step--reverse { width: calc(100% - 36px); padding: 38px 0; gap: 24px; }.process-visual { min-height: 350px; }.asset-caption { left: 13px; right: 13px; bottom: 13px; font-size: 7px; color:var(--amber-light) }.asset-caption b { font-size: 7px; }.process-copy h3 { font-size: 47px; margin-bottom: 20px; }.process-copy p { font-size: 15px; }.step-index { margin-bottom: 23px; }.journey-label { font-size: 15px; }.journey-stats { gap: 15px; padding: 13px 8px; }.journey-stats strong { font-size: 24px; }.journey-stats small { font-size: 7px; }.final-seal { width: 75px; height: 75px; font-size: 32px; }
+
+  .process-visual-art img {
+    width: 80%;
+  }
 
   .about { padding: 78px 0; }.about-image { min-height: 420px; }.about-image > img { left: 16%; width: 72%; }.about-stamp { width: 85px; height: 85px; top: 15px; right: 15px; }.about-stamp strong { font-size: 13px; }.about-copy h2 { font-size: 49px; margin-bottom: 25px; }.about-copy .about-lead { font-size: 17px !important; }.about-signature { margin-top: 32px; }.about-signature strong { font-size: 17px; }
 
@@ -876,6 +868,82 @@ button { font: inherit; }
 
 }
 
+/* =====================================================
+   NACHA — HERO CAROUSEL
+   CORRECTION DU CADRAGE DES IMAGES ET VIDÉOS SUR PC
+   ===================================================== */
+
+@media screen and (min-width: 821px) {
+
+  /* Conteneur général du carrousel */
+  #heroMedia {
+    position: absolute !important;
+    inset: 0 !important;
+
+    width: 100% !important;
+    height: 100% !important;
+
+    overflow: hidden !important;
+  }
+
+  /* Ciblage individuel des médias du carrousel */
+  #heroMedia > #heroVideo.hero-video,
+  #heroMedia > #heroImage.hero-image {
+
+    position: absolute !important;
+    inset: 0 !important;
+
+    width: 100% !important;
+    height: 100% !important;
+
+    max-width: none !important;
+    max-height: none !important;
+
+    /* Affichage intégral sans recadrage */
+    object-fit: contain !important;
+
+    /* Centrage horizontal et vertical */
+    object-position: 50% 50% !important;
+
+  }
+
+}
+
+/* =====================================================
+   NACHA — HERO CAROUSEL
+   NAVIGATION GESTUELLE PREMIUM
+   ===================================================== */
+
+/* Autoriser le défilement vertical tout en réservant
+   le geste horizontal à la navigation du carrousel. */
+
+.hero {
+  touch-action: pan-y pinch-zoom;
+}
+
+/* Empêcher la sélection accidentelle des médias. */
+
+#heroMedia,
+#heroMedia img,
+#heroMedia video {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* Retour visuel discret sur ordinateur. */
+
+@media (hover: hover) and (pointer: fine) {
+
+  .hero {
+    cursor: grab;
+  }
+
+  .hero.is-swipe-active {
+    cursor: grabbing;
+  }
+
+}
 
 /* E-commerce NACHA — styles des contrôles ajoutés uniquement */
 body.cart-open { overflow: hidden; }

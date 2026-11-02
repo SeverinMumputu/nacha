@@ -203,6 +203,211 @@
     }, HERO_AUTOPLAY_DELAY);
   };
 
+  /* =====================================================
+   NACHA — HERO CAROUSEL
+   NAVIGATION MANUELLE PAR SWIPE / DRAG
+   ===================================================== */
+
+if (hero && slides.length > 1) {
+
+  const HERO_SWIPE_THRESHOLD = 58;
+  const HERO_SWIPE_MIN_DISTANCE = 32;
+  const HERO_SWIPE_MIN_VELOCITY = 0.45;
+
+  let heroSwipe = null;
+
+  /*
+   * Début du geste :
+   * On ignore les éléments interactifs pour ne pas
+   * perturber la navigation, le menu ou le panier.
+   */
+
+  hero.addEventListener('pointerdown', event => {
+
+    if (!event.isPrimary) return;
+
+    if (event.pointerType === 'mouse' && event.button !== 0) {
+      return;
+    }
+
+    if (heroSwipe !== null) return;
+
+    const target = event.target;
+
+    if (
+      target instanceof Element &&
+      target.closest(
+        'a, button, input, textarea, select, ' +
+        '[contenteditable="true"], ' +
+        '.site-header, .mobile-nav, .hero-pagination'
+      )
+    ) {
+      return;
+    }
+
+    heroSwipe = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      startTime: 0,
+      dragging: false
+    };
+
+    /*
+     * Maintenir le suivi du pointeur même lorsque
+     * le curseur sort temporairement du Hero.
+     */
+
+    try {
+      hero.setPointerCapture(event.pointerId);
+    } catch (_) {}
+
+  });
+
+  /*
+   * Détection du déplacement horizontal.
+   */
+
+  hero.addEventListener('pointermove', event => {
+
+    if (!heroSwipe) return;
+
+    if (event.pointerId !== heroSwipe.pointerId) return;
+
+    const deltaX = event.clientX - heroSwipe.startX;
+    const deltaY = event.clientY - heroSwipe.startY;
+
+    const distanceX = Math.abs(deltaX);
+    const distanceY = Math.abs(deltaY);
+
+    /*
+     * Attendre que la direction du geste soit identifiable.
+     */
+
+    if (!heroSwipe.dragging) {
+
+      if (distanceX < 10 && distanceY < 10) return;
+
+      /*
+       * Un mouvement principalement vertical correspond
+       * au défilement normal de la page.
+       */
+
+      if (distanceY > distanceX) {
+        heroSwipe = null;
+        return;
+      }
+
+      /*
+       * Le geste horizontal commence réellement.
+       */
+
+      heroSwipe.dragging = true;
+      heroSwipe.startTime = performance.now();
+
+      /*
+       * Suspendre temporairement le carrousel automatique.
+       */
+
+      stopHeroAutoplay();
+
+      hero.classList.add('is-swipe-active');
+
+    }
+
+  });
+
+  /*
+   * Fin du geste :
+   * Gauche = média suivant.
+   * Droite = média précédent.
+   */
+
+  const finishHeroSwipe = (event, cancelled = false) => {
+
+    if (!heroSwipe) return;
+
+    if (event.pointerId !== heroSwipe.pointerId) return;
+
+    const gesture = heroSwipe;
+
+    heroSwipe = null;
+
+    if (!gesture.dragging) return;
+
+    const deltaX = event.clientX - gesture.startX;
+
+    const distance = Math.abs(deltaX);
+
+    const duration = Math.max(
+      1,
+      performance.now() - gesture.startTime
+    );
+
+    const velocity = distance / duration;
+
+    /*
+     * Accepter un déplacement suffisamment long
+     * ou un mouvement court mais rapide.
+     */
+
+    const validSwipe =
+      distance >= HERO_SWIPE_THRESHOLD ||
+      (
+        distance >= HERO_SWIPE_MIN_DISTANCE &&
+        velocity >= HERO_SWIPE_MIN_VELOCITY
+      );
+
+    hero.classList.remove('is-swipe-active');
+
+    if (!cancelled && validSwipe) {
+
+      if (deltaX < 0) {
+
+        // Glissement vers la gauche : média suivant.
+        applySlide(activeSlide + 1);
+
+      } else {
+
+        // Glissement vers la droite : média précédent.
+        applySlide(activeSlide - 1);
+
+      }
+
+    }
+
+    /*
+     * Reprendre la lecture automatique avec un
+     * nouveau délai après l'interaction manuelle.
+     */
+
+    startHeroAutoplay();
+
+  };
+
+  /*
+   * Terminaison normale du geste.
+   */
+
+  hero.addEventListener('pointerup', event => {
+    finishHeroSwipe(event);
+  });
+
+  /*
+   * Annulation : notamment lors d'un défilement
+   * vertical ou d'une interruption du pointeur.
+   */
+
+  hero.addEventListener('pointercancel', event => {
+    finishHeroSwipe(event, true);
+  });
+
+  hero.addEventListener('lostpointercapture', event => {
+    finishHeroSwipe(event, true);
+  });
+
+}
+
   // Afficher le premier média puis faire défiler images et vidéos automatiquement.
   applySlide(0);
   startHeroAutoplay();
