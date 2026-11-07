@@ -29,18 +29,29 @@ window.NACHA_CONFIG = {
       id: 'nacha-60g', title: 'NACHA SEBENE', weight: '60 g', kicker: 'Le format découverte',
       description: 'Moyennement piquant avec une saveur aromatisante à base du mukubi, une épice aux propriétés thérapeutiques exceptionnelles.',
       facts: ['Format 60 grammes'], image: 'piment_bocal_6.jpeg', imageAlt: 'Produit NACHA petit format 60 grammes',
+        // Photographies supplémentaires du même produit.
+  images: [
+    { src: 'groupe_piment_bocal_7.jpeg', alt: '' }
+  ],
       price: 4000, theme: 'product-tone--small'
     },
+
     {
       id: 'nacha-red-100g', title: 'NACHA ELENGI', weight: '100 g', kicker: 'La version piquante',
       description: 'Piquant avec une saveur aromatisante à base du poivre sauvage des forêts de la RDC. Ce type de poivre favorise la digestion et possède des vertus antibactériennes.',
       facts: ['Version piquante', 'Sachet rouge · 100 grammes'], image: 'piment_sachet_rouge.jpg', imageAlt: 'Sachet rouge NACHA 100 grammes',
       price: 6500, theme: 'product-tone--red'
     },
+
     {
       id: 'nacha-green-100g', title: 'NACHA SEBENE vert', weight: '100 g', kicker: 'La spécialité Mukubi',
       description: 'Moyennement piquant avec une saveur aromatisante à base du mukubi, une épice aux propriétés thérapeutiques exceptionnelles.',
       facts: ['Spécialité Mukubi', 'Sachet vert · 100 grammes'], image: 'piment_vert.jpg', imageAlt: 'Sachet vert NACHA 100 grammes',
+        images: [
+    { src: 'Nacha_Vert.png', alt: 'Vue arrière du produit NACHA 60 g' },
+    // { src: 'photo-60g-detail.jpeg', alt: 'Détail du produit NACHA 60 g' },
+    // { src: 'photo-60g-packaging.jpeg', alt: 'Présentation du produit NACHA 60 g' }
+  ],
       price: 6500, theme: 'product-tone--green'
     },
     {
