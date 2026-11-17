@@ -377,3 +377,1286 @@ body.product-lightbox-open {
   }
 
 }
+
+
+/* =====================================================
+   NACHA — CARTOGRAPHIE DES POINTS DE VENTE
+   Google Maps · Editorial premium
+   ===================================================== */
+
+.nacha-stores {
+  position: relative;
+  overflow: hidden;
+  padding: 130px 0 115px;
+  background: var(--ivory);
+  color: var(--ink);
+}
+
+/* En-tête éditorial */
+
+.nacha-stores-heading {
+  display: grid;
+  grid-template-columns: 1fr minmax(260px, 420px);
+  align-items: end;
+  gap: 35px;
+  margin-bottom: 60px;
+}
+
+.nacha-stores-heading .eyebrow {
+  grid-column: 1 / -1;
+  margin-bottom: -10px;
+}
+
+.nacha-stores-heading h2 {
+  max-width: 760px;
+  margin: 0;
+  font: 500 clamp(45px, 6vw, 78px)/1.03 var(--display);
+  letter-spacing: -.05em;
+}
+
+.nacha-stores-heading h2 em {
+  color: var(--wine);
+  font-weight: 500;
+}
+
+.nacha-stores-intro {
+  max-width: 410px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.9;
+}
+
+/* Composition principale */
+
+.nacha-stores-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(300px, .7fr);
+  gap: 18px;
+  align-items: stretch;
+}
+
+/* Cadre Google Maps */
+
+.nacha-map-card {
+  min-width: 0;
+  padding: 13px;
+  overflow: hidden;
+  border: 1px solid rgba(97,2,9,.12);
+  border-radius: 5px;
+  background: var(--wine-dark);
+  box-shadow: 0 20px 55px rgba(48,0,5,.10);
+}
+
+.nacha-map-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  min-height: 65px;
+  padding: 5px 12px 14px;
+  color: var(--ivory);
+}
+
+.nacha-map-toolbar > div:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.nacha-map-index {
+  color: var(--amber-light);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: .2em;
+}
+
+.nacha-map-toolbar strong {
+  font: 500 23px var(--display);
+}
+
+.nacha-map-live {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(255,248,240,.72);
+  font-size: 9px;
+  letter-spacing: .13em;
+}
+
+.nacha-map-live i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--amber);
+  box-shadow: 0 0 0 4px rgba(210,132,2,.12);
+}
+
+.nacha-map-canvas-wrap {
+  position: relative;
+  overflow: hidden;
+  min-height: 520px;
+  border-radius: 3px;
+  background: #f2ebe1;
+}
+
+#nachaStoresMap {
+  width: 100%;
+  height: 520px;
+  background: #f2ebe1;
+}
+
+.nacha-map-fallback {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(210,132,2,.13), transparent 45%),
+    #f2ebe1;
+  color: var(--wine);
+  text-align: center;
+}
+
+.nacha-map-fallback[hidden] {
+  display: none;
+}
+
+.nacha-map-fallback-mark {
+  display: grid;
+  place-items: center;
+  width: 65px;
+  height: 65px;
+  margin-bottom: 22px;
+  border: 1px solid var(--amber);
+  border-radius: 50%;
+  font: 500 32px var(--display);
+}
+
+.nacha-map-fallback strong {
+  font: 500 26px var(--display);
+}
+
+.nacha-map-fallback p {
+  max-width: 320px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.8;
+}
+
+.nacha-map-status {
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+  padding: 10px 12px 0;
+  color: rgba(255,248,240,.55);
+  font-size: 9px;
+  line-height: 1.6;
+}
+
+/* Panneau détaillé */
+
+.nacha-store-panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 590px;
+  padding: 35px 30px 22px;
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: 5px;
+  background:
+    radial-gradient(circle at 90% 12%, rgba(210,132,2,.19), transparent 37%),
+    linear-gradient(145deg, #610209, #300005);
+  color: var(--ivory);
+}
+
+.nacha-store-panel::before {
+  position: absolute;
+  z-index: -1;
+  top: 50px;
+  right: -125px;
+  width: 310px;
+  aspect-ratio: 1;
+  border: 1px solid rgba(241,182,79,.22);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 35px rgba(241,182,79,.025),
+    0 0 0 75px rgba(241,182,79,.018);
+  content: '';
+  pointer-events: none;
+}
+
+.nacha-store-kicker {
+  display: block;
+  margin-bottom: 40px;
+  color: var(--amber-light);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .19em;
+}
+
+.nacha-store-initial {
+  display: grid;
+  place-items: center;
+  width: 67px;
+  height: 67px;
+  margin-bottom: 25px;
+  border: 1px solid rgba(241,182,79,.7);
+  border-radius: 50%;
+  color: var(--ivory);
+  font: 500 35px var(--display);
+}
+
+.nacha-store-initial span {
+  color: var(--amber-light);
+}
+
+.nacha-store-detail h3 {
+  max-width: 330px;
+  margin: 0 0 12px;
+  color: var(--ivory);
+  font: 500 clamp(27px, 3vw, 37px)/1.15 var(--display);
+}
+
+.nacha-store-description {
+  max-width: 340px;
+  margin: 0 0 28px;
+  color: rgba(255,248,240,.59);
+  font-size: 11px;
+  line-height: 1.9;
+}
+
+.nacha-store-branch {
+  display: block;
+  margin: -3px 0 25px;
+  color: var(--amber-light);
+  font-size: 10px;
+  letter-spacing: .07em;
+}
+
+/* Informations du point sélectionné */
+
+.nacha-store-infos {
+  display: grid;
+  gap: 19px;
+  margin-top: 28px;
+  padding-top: 22px;
+  border-top: 1px solid rgba(255,248,240,.19);
+}
+
+.nacha-store-info {
+  display: grid;
+  grid-template-columns: 95px minmax(0, 1fr);
+  gap: 12px;
+}
+
+.nacha-store-info dt {
+  color: var(--amber-light);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: .12em;
+}
+
+.nacha-store-info dd {
+  margin: 0;
+  color: rgba(255,248,240,.83);
+  font-size: 10px;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+
+.nacha-store-note {
+  margin: 20px 0 0;
+  color: rgba(255,248,240,.53);
+  font-size: 9px;
+  line-height: 1.8;
+}
+
+.nacha-store-directions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  width: 100%;
+  min-height: 49px;
+  margin-top: 25px;
+  padding: 0 15px;
+  border: 1px solid rgba(241,182,79,.65);
+  background: transparent;
+  color: var(--ivory);
+  font-size: 10px;
+  font-weight: 600;
+  transition: background .3s, color .3s;
+}
+
+.nacha-store-directions:hover {
+  background: var(--amber);
+  color: var(--wine-dark);
+}
+
+.nacha-store-directions span {
+  font-size: 16px;
+  color: var(--amber-light);
+}
+
+.nacha-store-directions:hover span {
+  color: var(--wine-dark);
+}
+
+.nacha-store-panel-bottom {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  margin-top: 35px;
+  padding-top: 17px;
+  border-top: 1px solid rgba(255,248,240,.15);
+  color: rgba(255,248,240,.4);
+  font-size: 8px;
+  letter-spacing: .13em;
+}
+
+/* Sélecteur des points de vente */
+
+.nacha-store-list-wrapper {
+  margin-top: 35px;
+}
+
+.nacha-store-list-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 16px;
+  color: #8b756c;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .16em;
+}
+
+.nacha-store-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.nacha-store-choice {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr) 24px;
+  align-items: center;
+  gap: 13px;
+  min-height: 88px;
+  padding: 15px;
+  border: 1px solid rgba(97,2,9,.14);
+  background: transparent;
+  color: var(--wine);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background .3s,
+    border-color .3s,
+    transform .3s;
+}
+
+.nacha-store-choice:hover,
+.nacha-store-choice.is-active {
+  border-color: var(--wine);
+  background: rgba(97,2,9,.045);
+  transform: translateY(-2px);
+}
+
+.nacha-store-choice-number {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(210,132,2,.55);
+  border-radius: 50%;
+  color: var(--amber);
+  font: 500 15px var(--display);
+}
+
+.nacha-store-choice strong,
+.nacha-store-choice small {
+  display: block;
+}
+
+.nacha-store-choice strong {
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.nacha-store-choice small {
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.5;
+}
+
+.nacha-store-choice-arrow {
+  color: var(--amber);
+  font-size: 18px;
+  transition: transform .25s;
+}
+
+.nacha-store-choice.is-active .nacha-store-choice-arrow,
+.nacha-store-choice:hover .nacha-store-choice-arrow {
+  transform: translate(3px,-3px);
+}
+
+.nacha-stores-footnote {
+  margin: 22px 0 0;
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.7;
+}
+
+/* Responsive */
+
+@media (max-width: 1000px) {
+  .nacha-stores-heading {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .nacha-stores-intro {
+    max-width: 550px;
+  }
+
+  .nacha-stores-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .nacha-store-panel {
+    min-height: 430px;
+  }
+
+  .nacha-store-detail h3 {
+    max-width: 500px;
+  }
+}
+
+@media (max-width: 650px) {
+  .nacha-stores {
+    padding: 85px 0 75px;
+  }
+
+  .nacha-stores-heading {
+    margin-bottom: 35px;
+  }
+
+  .nacha-stores-heading h2 {
+    font-size: 48px;
+  }
+
+  .nacha-map-card {
+    padding: 9px;
+  }
+
+  .nacha-map-toolbar {
+    min-height: 59px;
+    padding-inline: 7px;
+  }
+
+  .nacha-map-toolbar strong {
+    font-size: 19px;
+  }
+
+  .nacha-map-canvas-wrap,
+  #nachaStoresMap {
+    min-height: 390px;
+    height: 390px;
+  }
+
+  .nacha-store-panel {
+    min-height: 420px;
+    padding: 27px 22px 19px;
+  }
+
+  .nacha-store-kicker {
+    margin-bottom: 27px;
+  }
+
+  .nacha-store-list {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .nacha-store-choice {
+    min-height: 76px;
+  }
+
+  .nacha-store-info {
+    grid-template-columns: 85px minmax(0, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nacha-store-choice,
+  .nacha-store-choice-arrow,
+  .nacha-store-directions {
+    transition: none !important;
+  }
+
+  .nacha-store-choice:hover,
+  .nacha-store-choice.is-active {
+    transform: none;
+  }
+}
+
+
+/* =====================================================
+   NACHA — AVIS DE CONSOMMATEURS
+   Design éditorial premium
+   ===================================================== */
+
+.nacha-reviews {
+  position: relative;
+  overflow: hidden;
+  padding: 125px 0 135px;
+  background: #FFF8F0;
+  color: var(--ink);
+}
+
+/* Décoration de fond */
+.nacha-reviews::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: -180px;
+  width: 460px;
+  height: 460px;
+  border: 1px solid rgba(97, 2, 9, .055);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 45px rgba(97, 2, 9, .018),
+    0 0 0 95px rgba(97, 2, 9, .012);
+  pointer-events: none;
+}
+
+/* En-tête */
+.nacha-reviews-heading {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr minmax(260px, 410px);
+  align-items: end;
+  gap: 28px;
+  margin-bottom: 65px;
+}
+
+.nacha-reviews-heading .eyebrow {
+  grid-column: 1 / -1;
+  margin-bottom: -8px;
+}
+
+.nacha-reviews-heading h2 {
+  max-width: 740px;
+  margin: 0;
+  font: 500 clamp(43px, 6vw, 76px)/1.04 var(--display);
+  letter-spacing: -.05em;
+}
+
+.nacha-reviews-heading h2 em {
+  color: var(--wine);
+  font-weight: 500;
+}
+
+.nacha-reviews-intro {
+  max-width: 410px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.95;
+}
+
+/* Grille des témoignages */
+.nacha-reviews-grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 17px;
+}
+
+/* Carte individuelle */
+.nacha-review-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  min-height: 290px;
+  padding: 38px 30px 27px;
+
+  overflow: hidden;
+
+  border: 1px solid rgba(97, 2, 9, .12);
+  background: #FFFCF8;
+
+  box-shadow: 0 15px 45px rgba(48, 0, 5, .035);
+
+  transition:
+    transform .4s cubic-bezier(.22, 1, .36, 1),
+    box-shadow .4s ease,
+    border-color .4s ease;
+}
+
+.nacha-review-card:hover {
+  transform: translateY(-7px);
+  border-color: rgba(210, 132, 2, .55);
+  box-shadow: 0 24px 55px rgba(48, 0, 5, .09);
+}
+
+/* Grande ouverture typographique */
+.nacha-review-quote {
+  display: block;
+  height: 48px;
+  color: var(--amber);
+  font: 500 82px/.85 Georgia, serif;
+  opacity: .85;
+}
+
+/* Message du consommateur */
+.nacha-review-message {
+  position: relative;
+  z-index: 1;
+
+  margin: 22px 0 35px;
+
+  color: var(--wine-dark);
+
+  font: 400 clamp(17px, 1.5vw, 21px)/1.65 var(--display);
+
+  letter-spacing: -.015em;
+}
+
+/* Nom du consommateur */
+.nacha-review-author {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  margin-top: auto;
+  padding-top: 18px;
+
+  border-top: 1px solid rgba(97, 2, 9, .12);
+}
+
+.nacha-review-author-line {
+  display: block;
+  width: 25px;
+  height: 2px;
+  background: var(--amber);
+}
+
+.nacha-review-author p {
+  margin: 0;
+  color: var(--wine);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+/* Carte éditoriale principale */
+.nacha-review-card--featured {
+  background:
+    radial-gradient(
+      circle at 95% 5%,
+      rgba(210, 132, 2, .17),
+      transparent 42%
+    ),
+    linear-gradient(145deg, #610209, #300005);
+
+  border-color: transparent;
+}
+
+.nacha-review-card--featured .nacha-review-quote {
+  color: var(--amber-light);
+}
+
+.nacha-review-card--featured .nacha-review-message {
+  color: var(--ivory);
+}
+
+.nacha-review-card--featured .nacha-review-author {
+  border-color: rgba(255, 248, 240, .2);
+}
+
+.nacha-review-card--featured .nacha-review-author p {
+  color: var(--ivory);
+}
+
+/* Responsive tablette */
+@media (max-width: 1000px) {
+  .nacha-reviews-heading {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .nacha-reviews-intro {
+    max-width: 570px;
+  }
+
+  .nacha-reviews-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .nacha-review-card--featured {
+    grid-column: 1 / -1;
+    min-height: 260px;
+  }
+}
+
+/* Responsive mobile */
+@media (max-width: 650px) {
+  .nacha-reviews {
+    padding: 85px 0 90px;
+  }
+
+  .nacha-reviews-heading {
+    margin-bottom: 38px;
+  }
+
+  .nacha-reviews-heading h2 {
+    font-size: 47px;
+  }
+
+  .nacha-reviews-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .nacha-review-card,
+  .nacha-review-card--featured {
+    grid-column: auto;
+    min-height: 250px;
+    padding: 30px 24px 23px;
+  }
+
+  .nacha-review-message {
+    margin: 16px 0 28px;
+    font-size: 19px;
+  }
+}
+
+/* Préférences de mouvement */
+@media (prefers-reduced-motion: reduce) {
+  .nacha-review-card {
+    transition: none !important;
+  }
+
+  .nacha-review-card:hover {
+    transform: none;
+  }
+}
+
+/* =====================================================
+   NACHA — PARTENAIRES
+   Défilement horizontal continu
+   ===================================================== */
+
+.nacha-partners {
+  position: relative;
+  overflow: hidden;
+  padding: 115px 0 55px;
+  background:
+    radial-gradient(
+      circle at 85% 15%,
+      rgba(210, 132, 2, .12),
+      transparent 34%
+    ),
+    linear-gradient(145deg, #610209, #300005);
+  color: var(--ivory);
+}
+
+
+/* =====================================================
+   NACHA — EN-TÊTE ET PRÉSENTATION DES PARTENAIRES
+   ===================================================== */
+
+.nacha-partners-heading {
+  display: block;
+  margin-bottom: 32px;
+}
+
+.nacha-partners-heading .eyebrow {
+  margin-bottom: 22px;
+  color: var(--amber-light);
+}
+
+.nacha-partners-heading h2 {
+  max-width: 850px;
+  margin: 0;
+  color: var(--ivory);
+  font: 500 clamp(42px, 5.8vw, 74px)/1.05 var(--display);
+  letter-spacing: -.05em;
+}
+
+.nacha-partners-heading h2 em {
+  color: var(--amber-light);
+  font-weight: 500;
+}
+
+
+/* Présentation du réseau */
+
+.nacha-partners-description {
+  display: grid;
+  grid-template-columns: 1.3fr .7fr;
+  align-items: center;
+  gap: 65px;
+  margin-bottom: 65px;
+}
+
+.nacha-partners-text p {
+  max-width: 760px;
+  margin: 0;
+  color: rgba(255, 248, 240, .72);
+  font-size: 14px;
+  line-height: 2;
+}
+
+
+/* Mise en valeur du réseau de distribution */
+
+.nacha-partners-proof {
+  position: relative;
+  padding-left: 30px;
+  border-left: 1px solid rgba(241, 182, 79, .5);
+}
+
+.nacha-partners-number {
+  display: block;
+  margin-bottom: 7px;
+  color: var(--amber-light);
+  font: 500 clamp(42px, 5vw, 60px)/1 var(--display);
+  letter-spacing: -.05em;
+}
+
+.nacha-partners-proof p {
+  max-width: 390px;
+  margin: 0;
+  color: rgba(255, 248, 240, .65);
+  font-size: 12px;
+  line-height: 1.9;
+}
+
+.nacha-partners-proof strong {
+  color: var(--ivory);
+  font-weight: 500;
+}
+
+
+/* =====================================================
+   NACHA — INVITATION À DEVENIR PARTENAIRE
+   ===================================================== */
+
+.nacha-partners-cta {
+  position: relative;
+  max-width: 1000px;
+  margin: 75px auto 0;
+  padding: clamp(35px, 5vw, 65px) 25px;
+
+  text-align: center;
+
+  border: 1px solid rgba(255, 248, 240, .14);
+  border-radius: 3px;
+
+  background:
+    radial-gradient(
+      circle at 50% 0%,
+      rgba(210, 132, 2, .12),
+      transparent 65%
+    ),
+    rgba(255, 248, 240, .035);
+}
+
+.nacha-partners-cta-eyebrow {
+  margin: 0 0 17px;
+  color: var(--amber-light);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+
+.nacha-partners-cta h3 {
+  margin: 0 auto 20px;
+  color: var(--ivory);
+  font: 500 clamp(32px, 4.5vw, 49px)/1.1 var(--display);
+  letter-spacing: -.04em;
+}
+
+.nacha-partners-cta h3 em {
+  color: var(--amber-light);
+  font-weight: 500;
+}
+
+.nacha-partners-cta-text {
+  max-width: 650px;
+  margin: 0 auto 30px;
+  color: rgba(255, 248, 240, .67);
+  font-size: 13px;
+  line-height: 2;
+}
+
+
+/* Bouton devenir partenaire */
+
+.nacha-partners-cta-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+
+  min-height: 52px;
+  padding: 0 27px;
+
+  color: #300005;
+  background: var(--amber-light);
+
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-decoration: none;
+
+  border: 1px solid var(--amber-light);
+  border-radius: 2px;
+
+  transition:
+    background .3s ease,
+    color .3s ease,
+    border-color .3s ease,
+    transform .3s ease,
+    box-shadow .3s ease;
+}
+
+.nacha-partners-cta-button span {
+  font-size: 17px;
+  transition: transform .3s ease;
+}
+
+.nacha-partners-cta-button:hover {
+  color: var(--ivory);
+  background: transparent;
+  border-color: var(--amber-light);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, .15);
+}
+
+.nacha-partners-cta-button:hover span {
+  transform: translate(3px, -3px);
+}
+
+.nacha-partners-cta-button:focus-visible {
+  outline: 2px solid var(--ivory);
+  outline-offset: 5px;
+}
+
+
+/* Zone du ruban */
+.nacha-partners-marquee {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  padding: 12px 0 24px;
+
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 7%,
+    #000 93%,
+    transparent
+  );
+
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 7%,
+    #000 93%,
+    transparent
+  );
+}
+
+/* Piste animée */
+.nacha-partners-track {
+  display: flex;
+  align-items: center;
+  width: max-content;
+  animation: nachaPartnersScroll 35s linear infinite;
+  will-change: transform;
+}
+
+/* Groupes identiques */
+.nacha-partners-group {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 20px;
+  padding-right: 20px;
+}
+
+/* Cartes des logos */
+.nacha-partner-item {
+  display: grid;
+  place-items: center;
+
+  width: 220px;
+  height: 125px;
+  padding: 25px;
+
+  flex-shrink: 0;
+
+  border: 1px solid rgba(255, 248, 240, .13);
+  border-radius: 3px;
+
+  background: #FFF8F0;
+
+  transition:
+    transform .35s ease,
+    box-shadow .35s ease,
+    border-color .35s ease;
+}
+
+/* Logos */
+.nacha-partner-item img {
+  display: block;
+
+  max-width: 100%;
+  max-height: 86px;
+
+  width: auto;
+  height: auto;
+
+  object-fit: contain;
+
+  transition: transform .35s ease;
+}
+.NomPartenaire{
+  margin-top: 15px;
+  font-weight: bold;
+  color: white;
+}
+.NomPartenaireFULLTECH{
+  margin-top: 30px;
+  font-weight: bold;
+  color: white;
+}
+
+/* Survol */
+.nacha-partner-item:hover {
+  transform: translateY(-6px);
+  border-color: var(--amber);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, .2);
+}
+
+.nacha-partner-item:hover img {
+  transform: scale(1.06);
+}
+
+/* Pause au survol ou au focus */
+.nacha-partners-marquee:hover .nacha-partners-track,
+.nacha-partners-marquee:focus-within .nacha-partners-track {
+  animation-play-state: paused;
+}
+
+/* Animation continue */
+@keyframes nachaPartnersScroll {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Signature */
+.nacha-partners-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  margin-top: 43px;
+}
+
+.nacha-partners-footer p {
+  margin: 0;
+  color: rgba(255, 248, 240, .62);
+  font: 400 15px var(--display);
+  text-align: center;
+}
+
+.nacha-partners-footer-line {
+  width: 45px;
+  height: 1px;
+  background: rgba(241, 182, 79, .55);
+}
+
+/* Tablette */
+@media (max-width: 1000px) {
+  .nacha-partners-heading {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .nacha-partners-intro {
+    max-width: 560px;
+  }
+
+  .nacha-partner-item {
+    width: 190px;
+    height: 115px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 650px) {
+  .nacha-partners {
+    padding: 85px 0 40px;
+  }
+
+  .nacha-partners-heading {
+    margin-bottom: 40px;
+  }
+
+  .nacha-partners-heading h2 {
+    font-size: 46px;
+  }
+
+  .nacha-partners-track {
+    animation-duration: 28s;
+  }
+
+  .nacha-partners-group {
+    gap: 12px;
+    padding-right: 12px;
+  }
+
+  .nacha-partner-item {
+    width: 160px;
+    height: 100px;
+    padding: 20px;
+  }
+
+  .nacha-partner-item img {
+    max-height: 62px;
+  }
+
+  .nacha-partners-footer {
+    gap: 12px;
+    margin-top: 30px;
+  }
+
+  .nacha-partners-footer p {
+    font-size: 13px;
+  }
+
+  .nacha-partners-footer-line {
+    width: 20px;
+    flex-shrink: 0;
+  }
+}
+
+/* Respect des préférences de mouvement */
+@media (prefers-reduced-motion: reduce) {
+  .nacha-partners-track {
+    animation: none !important;
+    transform: none;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .nacha-partners-group[aria-hidden="true"] {
+    display: none;
+  }
+
+  .nacha-partners-group {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .nacha-partner-item,
+  .nacha-partner-item img {
+    transition: none !important;
+  }
+}
+
+/* Tablette */
+@media (max-width: 1000px) {
+
+  .nacha-partners-description {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    margin-bottom: 50px;
+  }
+
+  .nacha-partners-proof {
+    max-width: 600px;
+  }
+
+}
+
+
+/* Mobile */
+@media (max-width: 650px) {
+
+  .nacha-partners-heading {
+    margin-bottom: 25px;
+  }
+
+  .nacha-partners-heading h2 {
+    font-size: 46px;
+  }
+
+  .nacha-partners-description {
+    gap: 25px;
+    margin-bottom: 40px;
+  }
+
+  .nacha-partners-text p {
+    font-size: 13px;
+    line-height: 1.9;
+  }
+
+  .nacha-partners-proof {
+    padding-left: 20px;
+  }
+
+  .nacha-partners-proof p {
+    font-size: 12px;
+  }
+
+  .nacha-partners-cta {
+    margin-top: 45px;
+    padding: 40px 22px;
+  }
+
+  .nacha-partners-cta h3 {
+    font-size: 35px;
+  }
+
+  .nacha-partners-cta-text {
+    font-size: 12px;
+    line-height: 1.9;
+  }
+
+  .nacha-partners-cta-button {
+    min-height: 49px;
+    padding: 0 21px;
+  }
+.NomPartenaire{
+  margin-top: 15px;
+  font-weight: bold;
+  color: white;
+}
+.NomPartenaireFULLTECH{
+  margin-top: 30px;
+  font-weight: bold;
+  color: white;
+}
+}

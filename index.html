@@ -56,9 +56,11 @@
   </a>
         <nav class="desktop-nav" aria-label="Navigation principale">
           <a href="#gamme">La gamme</a>
-           <!--<a href="#production">Production</a> -->
-          <a href="#apropos">Nacha</a>
-          <!-- <a href="#choix">Le choix Nacha</a>-->
+          <a href="#histoire" aria-current="page">Qui sommes-nous</a>
+          <a href="qui-sommes-nous.html#tracabilite">Traçabilité</a>
+          <a href="#points-vente">Distribution</a>
+          <a href="qui-sommes-nous.html#soutien-femmes-kwilu">Femmes du Kwilu</a>
+          <a href="#partenaires">Partenaires</a>
         </nav>
         <button class="cart-trigger" id="cartTrigger" type="button"
                 aria-label="Ouvrir le panier" aria-controls="cartDrawer" aria-expanded="false">
@@ -74,10 +76,12 @@
         </button>
       </header>
       <nav class="mobile-nav" id="mobileNav" aria-label="Navigation mobile" inert>
-        <a href="#gamme">La gamme <span>01</span></a>
-       <!-- <a href="#production">Production <span>02</span></a>-->
-        <a href="#apropos">Nacha <span>03</span></a>
-       <!-- <a href="#choix">Le choix Nacha <span>04</span></a>-->
+        <a href="#gamme">La gamme</a>
+         <a href="#histoire" aria-current="page">Qui sommes-nous</a>
+          <a href="qui-sommes-nous.html#tracabilite">Traçabilité</a>
+          <a href="#points-vente">Distribution</a>
+          <a href="qui-sommes-nous.html#soutien-femmes-kwilu">Femmes du Kwilu</a>
+          <a href="#partenaires">Partenaires</a>
       </nav>
       <div class="hero-pagination" id="heroPagination" aria-label="Choisir une séquence du carrousel">
         <button type="button" class="hero-dot is-active" aria-label="Séquence 1" aria-pressed="true" data-slide="0"><span></span></button>
@@ -104,187 +108,515 @@
         <button type="button" class="cart-clear" id="cartClear">Vider le panier</button>
         <div class="cart-total-row"><span>Sous-total</span><strong id="cartSubtotal">—</strong></div>
         <p class="cart-status" id="cartStatus" role="status" aria-live="polite"></p>
-        <button type="button" class="cart-checkout" id="checkoutWhatsapp">Confirmer la commande sur WhatsApp <span aria-hidden="true">↗</span></button>
+        <button type="button" class="cart-checkout" id="checkoutWhatsapp">Confirmer la commande sur WhatsApp</button>
         <p class="cart-whatsapp-note">La commande sera préparée dans WhatsApp. Vous devrez envoyer le message pour la transmettre à NACHA.</p>
       </div>
     </aside>
 
-    <!-- 2. LA GAMME NACHA -->
-    <section class="collection section-ivory" id="gamme">
-      <div class="section-shell">
-        <div class="section-heading reveal" data-reveal>
-          <p class="eyebrow">L'expression du produit</p>
-          <h1>La gamme <em>Nacha.</em></h1>
-          <p class="heading-intro">Quatre formats, une même attention portée au piment et à la richesse de ses saveurs.</p>
+<!-- 2. LA GAMME NACHA -->
+<section class="collection section-ivory" id="gamme">
+
+  <div class="section-shell">
+
+    <div class="section-heading reveal" data-reveal>
+      
+      <h1>La gamme <em>Nacha</em></h1>
+
+    </div>
+
+    <!-- GRILLE COMMERCIALE : TOUS LES PRODUITS VISIBLES -->
+    <div
+      class="nacha-product-grid reveal"
+      id="productGrid"
+      data-reveal
+      aria-label="Tous les produits de la gamme NACHA">
+    </div>
+
+  </div>
+
+
+  <!-- FICHE IMMERSIVE DU PRODUIT -->
+  <dialog
+    class="nacha-product-modal"
+    id="productDetailModal"
+    aria-labelledby="productDetailTitle">
+
+    <div class="nacha-product-modal-panel">
+
+      <button
+        type="button"
+        class="nacha-product-modal-close"
+        id="productDetailClose"
+        aria-label="Fermer les détails du produit">
+        ×
+      </button>
+
+      <div class="nacha-product-modal-layout">
+
+        <!-- GALERIE DU PRODUIT -->
+        <div
+          class="nacha-product-modal-gallery"
+          id="productDetailGallery">
         </div>
 
-        <div class="product-selector reveal" data-reveal role="group" aria-label="Choisir un format NACHA">
-          <button type="button" class="product-option is-active" aria-pressed="true" data-product="0"><span class="option-no">01</span><span><strong>Petit format</strong><small>60 g</small></span><i aria-hidden="true">↗</i></button>
-          <button type="button" class="product-option" aria-pressed="false" data-product="1"><span class="option-no">02</span><span><strong>Sachet rouge</strong><small>100 g · Piquant</small></span><i aria-hidden="true">↗</i></button>
-          <button type="button" class="product-option" aria-pressed="false" data-product="2"><span class="option-no">03</span><span><strong>Sachet vert</strong><small>100 g · Mukubi</small></span><i aria-hidden="true">↗</i></button>
-          <button type="button" class="product-option" aria-pressed="false" data-product="3"><span class="option-no">04</span><span><strong>Format portatif</strong><small>15 g</small></span><i aria-hidden="true">↗</i></button>
-        </div>
 
-        <div class="product-feature reveal" data-reveal>
-          <div class="product-stage" id="productStage" aria-live="polite">
-            <div class="product-stage-art" id="productVisual" aria-label="Emplacement de la photographie officielle du produit">
-              
-              <img class="stage-chili" src="piment_bocal_5.jpg" alt="" aria-hidden="true">
-              <div class="asset-placeholder asset-placeholder--product">
-              </div>
-              <button type="button" class="product-add-cart" id="productAddToCart"
-                      aria-label="Ajouter le produit sélectionné au panier" title="Ajouter au panier">
-                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                  <path d="M3 4h2l2.1 11.1a2 2 0 0 0 2 1.6h7.8a2 2 0 0 0 1.9-1.4L21 8H6" />
-                  <circle cx="10" cy="20" r="1" /><circle cx="18" cy="20" r="1" />
-                  <path d="M14 9v4m-2-2h4" />
-                </svg>
-              </button>
+        <!-- INFORMATIONS DU PRODUIT -->
+        <div class="nacha-product-modal-copy">
+
+          <span
+            class="nacha-product-kicker"
+            id="productDetailKicker">
+          </span>
+
+          <h2 id="productDetailTitle"></h2>
+
+          <p
+            class="nacha-product-modal-description"
+            id="productDetailDescription">
+          </p>
+
+          <div
+            class="nacha-product-prices -product-nachaprices--detail"
+            id="productDetailPrices">
+          </div>
+
+
+          <!-- CARACTÉRISTIQUES -->
+          <div class="nacha-product-detail-specs">
+
+            <div class="nacha-product-spec">
+              <span>FORMAT</span>
+              <p id="productDetailFormat"></p>
             </div>
-          </div>
-          <div class="product-copy">
-            <h2 id="productTitle">Petit format <em>60 g</em></h2>
-            <p id="productDescription">Un format compact de la gamme NACHA.</p>
-            <p class="product-price-line"><span>Prix</span><strong id="productPrice">15 000 FC</strong></p>
-            <div class="product-facts" id="productFacts"><span>Format 60 grammes</span></div>
-            <div class="product-actions">
-              <div class="product-arrows">
-                <button type="button" class="round-arrow" id="productPrev" aria-label="Produit précédent">←</button>
-                <button type="button" class="round-arrow round-arrow--filled" id="productNext" aria-label="Produit suivant">→</button>
-              </div>
+
+            <div class="nacha-product-spec">
+              <span>CONSEILS D'UTILISATION</span>
+              <p id="productDetailUsage"></p>
             </div>
+
+            <div class="nacha-product-spec">
+              <span>COMPOSITION</span>
+              <p id="productDetailComposition"></p>
+            </div>
+
           </div>
+
+
+          <!-- INFORMATIONS COMPLÉMENTAIRES -->
+          <div
+            class="nacha-product-detail-facts"
+            id="productDetailFacts">
+          </div>
+
+
+          <button
+            type="button"
+            class="nacha-product-add-button"
+            id="productDetailAddToCart">
+            <span>Ajouter au panier</span>
+
+          </button>
+
         </div>
+
       </div>
-    </section>
 
-    <!-- 3. PRODUCTION 
-    <section class="production" id="production">
-      <div class="production-intro section-shell">
-        <div class="production-intro-top reveal" data-reveal>
-          <p class="eyebrow eyebrow--light">De l'origine au produit fini</p>
+    </div>
+
+  </dialog>
+
+</section>
+
+<!-- 6. POINTS DE VENTE NACHA -->
+<section class="nacha-stores" id="points-vente">
+  <div class="section-shell">
+
+    <div class="nacha-stores-heading reveal" data-reveal>
+ 
+      <h2>
+        Retrouvez NACHA <em>près de chez vous.</em>
+      </h2>
+
+      <p class="nacha-stores-intro">
+        Découvrez les points de vente où retrouver les produits
+        NACHA à Kinshasa. Sélectionnez un marqueur sur la carte
+        pour consulter les informations de l'enseigne.
+      </p>
+    </div>
+
+    <div class="nacha-stores-layout reveal" data-reveal>
+
+      <div class="nacha-map-card">
+
+        <div class="nacha-map-toolbar">
+          <div>
+            <span class="nacha-map-index">NACHA / RDC</span>
+            <strong>Nos points de vente</strong>
+          </div>
+
+          <span class="nacha-map-live">
+            <i></i> KINSHASA
+          </span>
         </div>
-        <h2 class="production-title reveal" data-reveal>Découvrez comment notre piment devient <em>Nacha, la vraie saveur africaine.</em></h2>
-        <div class="production-intro-bottom reveal" data-reveal>
-          <p>Un parcours en cinq étapes, du Kwilu à la poudre de piment soigneusement préparée.</p>
+
+        <div class="nacha-map-canvas-wrap">
+
+          <div
+            id="nachaStoresMap"
+            role="region"
+            aria-label="Carte interactive des points de vente NACHA à Kinshasa">
+          </div>
+
+          <div class="nacha-map-fallback" id="nachaMapFallback">
+            <span class="nacha-map-fallback-mark">N.</span>
+            <strong>La cartographie NACHA</strong>
+            <p>
+              Configurez la clé Google Maps pour afficher
+              les localisations interactives.
+            </p>
+          </div>
+
+          <!-- FICHE FLOTTANTE INTÉGRÉE À LA CARTE -->
+          <aside
+            class="nacha-store-panel nacha-map-popup"
+            id="nachaStorePanel"
+            aria-live="polite"
+            aria-hidden="true"
+            inert
+            hidden>
+
+            <button
+              type="button"
+              class="nacha-store-close"
+              id="nachaStoreClose"
+              aria-label="Fermer les informations du point de vente">
+              ×
+            </button>
+
+            <div class="nacha-store-detail" id="nachaStoreDetail">
+
+              <span class="nacha-store-kicker">
+                RÉSEAU DE DISTRIBUTION NACHA
+              </span>
+
+              <div class="nacha-store-initial">
+  <img
+    src="logo.webp"
+    alt="Logo NACHA">
+</div>
+
+              <h3>Sélectionnez un point de vente.</h3>
+
+              <p class="nacha-store-description">
+                Cliquez sur l'un des marqueurs de la carte
+                pour découvrir son adresse, ses horaires
+                et les informations pratiques.
+              </p>
+
+            </div>
+
+            <div class="nacha-store-panel-bottom">
+              <span>LA VRAIE SAVEUR AFRICAINE</span>
+              <span>RÉSEAU NACHA</span>
+            </div>
+
+          </aside>
+
         </div>
+
+        <div
+          class="nacha-map-status"
+          id="nachaMapStatus"
+          role="status"
+          aria-live="polite">
+          Préparation de la cartographie...
+        </div>
+
       </div>
 
-      <div class="process-list">
-        <article class="process-step" id="etape-recolte">
-          <div class="process-visual process-visual--harvest" data-reveal>
-            <div class="process-visual-art"><img src="recolte_fonBlanc.webp" alt="" aria-hidden="true"></div>
-            <div class="asset-caption"><span>01 / Récolte</span></div>
-          </div>
-          <div class="process-copy reveal" data-reveal>
-            <span class="step-index">Étape 01 </span>
-            <h3>La <em>récolte</em></h3>
-            <p>C'est au cœur de la province du Kwilu, en République démocratique du Congo, que notre piment prend ses racines.</p>
-            <p>De sa récolte à son conditionnement, il traverse différentes étapes de préparation. Chacune est réalisée avec soin pour préserver ses arômes, sa couleur et toute la richesse de son goût.</p>
-          </div>
-        </article>
+    </div>
 
-        <article class="process-step process-step--reverse" id="etape-selection">
-          <div class="process-visual process-visual--selection" data-reveal>
-            <div class="process-visual-art"><img src="selection.webp" alt=""></div>
-            <div class="asset-caption"><span>02 / Sélection</span></div>
-          </div>
-          <div class="process-copy reveal" data-reveal>
-            <span class="step-index">Étape 02</span>
-            <h3>La <em>sélection</em></h3>
-            <p>Après la récolte, les piments sont soigneusement sélectionnés.</p>
-            <p>Cette étape permet de retenir les plus beaux fruits et d'assurer une base de qualité pour la suite du processus de transformation.</p>
-          </div>
-        </article>
+  </div>
+</section>
 
-        <article class="process-step" id="etape-transport">
-          <div class="process-visual process-visual--journey" data-reveal>
-            <div class="process-visual-art"><img src="trajet_2.webp" alt=""></div>
-          </div>
-          <div class="process-copy reveal" data-reveal>
-            <span class="step-index">Étape 03</span>
-            <h3>De Kikwit <em>à Kinshasa</em></h3>
-            <p>Après 12 jours de séchage, les piments entament un voyage de 512 km vers Kinshasa.</p>
-            <p>Cette méthode permet de préserver les qualités organoleptiques du piment : son goût, ses arômes et sa couleur, tout en favorisant une conservation de longue durée.</p>
-          </div>
-        </article>
 
-        <article class="process-step process-step--reverse" id="etape-mouture">
-          <div class="process-visual process-visual--grind" data-reveal>
-            <div class="process-visual-art"><img src="piment_molou.webp" alt=""></div>
-            <div class="asset-caption"><span>04 / Mouture & tamisage</span></div>
-          </div>
-          <div class="process-copy reveal" data-reveal>
-            <span class="step-index">Étape 04</span>
-            <h3>La <em>mouture</em></h3>
-            <p>Une fois parfaitement séché, le piment est moulu avec soin.</p>
-            <p>Après séchage, le piment est moulu, tamisé trois fois et débarrassé de toute impureté pour garantir une qualité optimale.</p>
-          </div>
-        </article>
+<!-- 7. AVIS DE CONSOMMATEURS NACHA -->
+<section class="nacha-reviews" id="avis-consommateurs">
 
-        <article class="process-step process-step--final" id="etape-resultat">
-          <div class="process-visual process-visual--final" data-reveal>
-            <div class="process-visual-art"><img src="resultat_final.webp" alt=""></div>
-            <div class="asset-caption"><span>05 / Produit fini</span></div>
-          </div>
-          <div class="process-copy reveal" data-reveal>
-            <span class="step-index">Étape 05</span>
-            <h3>Le résultat <em>final</em></h3>
-            <p>Le produit fini révèle toute l'essence de Nacha.</p>
-            <p>Un piment authentique, issu d'un savoir-faire congolais et soigneusement travaillé à chaque étape de sa préparation.</p>
-            <p>De la sélection des ingrédients au conditionnement final, NACHA met la qualité et le goût à l'honneur pour apporter à chaque repas une touche de saveur africaine intense, raffinée et pleine de caractère.</p>
-            <p class="process-signature">NACHA, la vraie saveur africaine.</p>
-          </div>
-        </article>
+  <div class="section-shell">
+
+    <!-- EN-TÊTE -->
+    <div class="nacha-reviews-heading reveal" data-reveal>
+
+      <h2>
+        NACHA se raconte <em>à travers vous.</em>
+      </h2>
+
+      <p class="nacha-reviews-intro">
+        NACHA se construit avec celles et ceux qui l’utilisent chaque jour :
+        à la maison, dans les restaurants, les snacks, les ngandas et les
+        points de vente. Découvrez leurs avis et leurs appréciations.
+      </p>
+
+    </div>
+
+
+    <!-- GRILLE DES AVIS -->
+    <div class="nacha-reviews-grid">
+
+      <!-- AVIS 01 -->
+      <article
+        class="nacha-review-card nacha-review-card--featured reveal"
+        data-reveal>
+
+        <span class="nacha-review-quote" aria-hidden="true">“</span>
+
+        <blockquote class="nacha-review-message">
+          Je suis en voyage en Espagne et on a embarqué ton piment avec nous. Il est tellement bon.
+        </blockquote>
+
+        <div class="nacha-review-author">
+          <span class="nacha-review-author-line"></span>
+          <p>Emmanuelle Henderyckx</p>
+        </div>
+
+      </article>
+
+
+      <!-- AVIS 02 -->
+      <article class="nacha-review-card nacha-review-card--featured reveal"
+        data-reveal>
+
+        <span class="nacha-review-quote" aria-hidden="true">“</span>
+
+        <blockquote class="nacha-review-message">
+          Les saveurs de Nacha en Mukubi me font penser à mon enfance au Congo.
+        </blockquote>
+
+        <div class="nacha-review-author">
+          <span class="nacha-review-author-line"></span>
+          <p>Mike kolaka</p>
+        </div>
+
+      </article>
+
+
+      <!-- AVIS 03 -->
+      <article class="nacha-review-card nacha-review-card--featured reveal"
+        data-reveal>
+
+        <span class="nacha-review-quote" aria-hidden="true">“</span>
+
+        <blockquote class="nacha-review-message">
+          Nacha tourne autour du piment seulement ? Tu développes d'autres produits ?
+        </blockquote>
+
+        <div class="nacha-review-author">
+          <span class="nacha-review-author-line"></span>
+          <p>Emmanuelle Henderyckx</p>
+        </div>
+
+      </article>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- 8. PARTENAIRES NACHA -->
+<section class="nacha-partners" id="partenaires">
+
+  <div class="section-shell">
+
+    <!-- EN-TÊTE -->
+    <div class="nacha-partners-heading reveal" data-reveal>
+
+
+      <h2>
+        Ensemble, nous allons <em>plus loin.</em>
+      </h2>
+
+    </div>
+
+
+    <!-- PRÉSENTATION DU RÉSEAU -->
+    <div class="nacha-partners-description reveal" data-reveal>
+
+      <div class="nacha-partners-text">
+        <p>
+          NACHA s’appuie sur une chaîne de partenaires qui contribuent
+          à faire vivre une agriculture et une alimentation locales de
+          qualité : producteurs et coopératives agricoles, distributeurs,
+          agents commerciaux, marketeurs, supermarchés, épiceries fines,
+          restaurants, snacks, institutions et organisations d’accompagnement.
+        </p>
       </div>
-    </section>-->
 
-    <!-- 4. ABOUT NACHA -->
-    <section class="about section-ivory" id="apropos">
-      <div class="about-layout section-shell">
-        <div class="about-image reveal" data-reveal>
-          <div class="about-image-bg"></div>
-          <img src="logo.webp" alt="" aria-hidden="true">
-        </div>
-        <div class="about-copy">
-          <p class="eyebrow reveal" data-reveal> À propos de Nacha</p>
-          <h2 class="reveal" data-reveal>Une saveur enracinée <em>au Congo.</em></h2>
-          <p class="about-lead reveal" data-reveal>Nacha est une marque agroalimentaire développée par <strong>FulltechCongo</strong>, spécialisée dans la transformation et la commercialisation de piments et d'épices congolaises.</p>
-          <p class="about-body reveal" data-reveal>C'est au cœur de la province du Kwilu, anciennement associée au Bandundu, en République démocratique du Congo, que notre piment prend ses racines.</p>
-        </div>
-      </div>
-    </section>
+      <div class="nacha-partners-proof">
+        <span class="nacha-partners-number">+25</span>
 
-    <!-- 5. LE CHOIX NACHA 
-    <section class="reasons" id="choix">
-      <div class="section-shell">
-        <div class="reasons-heading reveal" data-reveal>
-          <div><p class="eyebrow eyebrow--light">Ce qui nous caractérise</p><h2>Le choix <em>Nacha</em></h2></div>
-        </div>
-        <div class="reason-list">
-          <article class="reason-card reveal" data-reveal>
-            <span class="reason-number">01</span><div class="reason-symbol reason-symbol--origin" aria-hidden="true"><i></i><i></i><i></i></div>
-            <div class="reason-text"><h3>Des origines <em>authentiques.</em></h3><p>Tout commence au cœur du Kwilu, en RDC. C'est dans cette région que notre piment est cultivé, puis récolté à maturité. Un produit ancré dans son terroir, inspiré de la richesse du patrimoine culinaire congolais. Une saveur qui puise son caractère dans ses origines.</p></div><span class="reason-arrow" aria-hidden="true">↗</span>
-          </article>
-          <article class="reason-card reveal" data-reveal>
-            <span class="reason-number">02</span><div class="reason-symbol reason-symbol--care" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
-            <div class="reason-text"><h3>Une préparation <em>soignée.</em></h3><p>Parce que la qualité se construit à chaque étape. De la sélection au séchage, chaque étape de préparation est réalisée avec attention pour préserver les qualités naturelles du piment, notamment son goût, ses arômes et sa couleur. Le savoir-faire derrière chaque pincée.</p></div><span class="reason-arrow" aria-hidden="true">↗</span>
-          </article>
-          <article class="reason-card reveal" data-reveal>
-            <span class="reason-number">03</span><div class="reason-symbol reason-symbol--grind" aria-hidden="true"><i></i><i></i><i></i></div>
-            <div class="reason-text"><h3>Une mouture <em>fine.</em></h3><p>Une texture travaillée avec précision. Après avoir été soigneusement séché, notre piment est moulu puis tamisé à trois reprises afin d'obtenir une poudre fine et homogène. Un détail qui fait toute la différence.</p></div><span class="reason-arrow" aria-hidden="true">↗</span>
-          </article>
-          <article class="reason-card reveal" data-reveal>
-            <span class="reason-number">04</span><div class="reason-symbol reason-symbol--taste" aria-hidden="true"><i></i><i></i></div>
-            <div class="reason-text"><h3>Bien plus que <em>du piquant.</em></h3><p>Le goût avant tout. Le piment Nacha ne se limite pas à son intensité. Il apporte du caractère à vos préparations, relève les ingrédients et accompagne les saveurs de vos plats. Parce qu'un bon piment ne se résume pas à sa force.</p></div><span class="reason-arrow" aria-hidden="true">↗</span>
-          </article>
-          <article class="reason-card reason-card--last reveal" data-reveal>
-            <span class="reason-number">05</span><div class="reason-symbol reason-symbol--signature" aria-hidden="true">N<span>.</span></div>
-            <div class="reason-text"><h3>La vraie saveur <em>africaine.</em></h3><p>Le résultat d'un savoir-faire, le plaisir d'une saveur authentique. Né au Congo et soigneusement préparé, Nacha célèbre la richesse de nos traditions culinaires à travers un piment naturel, intense et plein de caractère.</p><strong class="reason-signature">NACHA, la vraie saveur africaine.</strong></div><span class="reason-arrow" aria-hidden="true">↗</span>
-          </article>
-        </div>
+        <p>
+          NACHA est déjà distribué dans plus de 25 supermarchés,
+          épiceries fines et boutiques, notamment grâce à des
+          partenaires tels que <strong>GG Mart, City Mart et SK Supermarché.</strong>
+        </p>
       </div>
-    </section>-->
+
+    </div>
+
+  </div>
+
+
+  <!-- RUBAN DÉFILANT -->
+  <div class="nacha-partners-marquee" aria-label="Partenaires de NACHA">
+
+    <div class="nacha-partners-track">
+
+      <!-- PREMIER GROUPE DE LOGOS -->
+      <div class="nacha-partners-group">
+
+        <div class="nacha-partner-item">
+          <img
+            src="bracongo.webp"
+            alt="Logo du partenaire 1"
+            loading="lazy">
+            <p class="NomPartenaire">BRANCONGO</p>
+        </div>
+
+        <div class="nacha-partner-item">
+          <img
+            src="pierreCastel.png"
+            alt="Logo du partenaire 2"
+            loading="lazy">
+            <p class="NomPartenaire">PIERRE CASTEL</p>
+        </div>
+
+        <div class="nacha-partner-item">
+          <img
+            src="MATA.jpeg"
+            alt="Logo du partenaire 2"
+            loading="lazy">
+            <p class="NomPartenaire">MATA'S AGENCY</p>
+        </div>
+
+        <div class="nacha-partner-item">
+          <img
+            src="enabel.jpeg"
+            alt="Logo du partenaire 3"
+            loading="lazy">
+            <p class="NomPartenaire">ENABEL</p>
+        </div>
+
+        <div class="nacha-partner-item">
+          <img
+            src="Ellyon&Co.jpeg"
+            alt="Logo du partenaire 4"
+            loading="lazy">
+            <p class="NomPartenaire">ELLYON&CO</p>
+        </div>
+
+        <div class="nacha-partner-item">
+          <img
+            src="Logo_Official.jpeg"
+            alt="Logo du partenaire 5"
+            loading="lazy">
+          <p class="NomPartenaireFULLTECH">FULLTECHCONGO</p>
+        </div>
+
+      </div>
+
+
+      <!-- DEUXIÈME GROUPE : RÉPÉTITION POUR LE DÉFILEMENT CONTINU -->
+        <div class="nacha-partners-group">
+
+        <div class="nacha-partner-item">
+          <img
+            src="bracongo.webp"
+            alt="Logo du partenaire 1"
+            loading="lazy">
+            <p class="NomPartenaire">BRANCONGO</p>
+        </div>
+
+        <div class="nacha-partner-item">
+          <img
+            src="pierreCastel.png"
+            alt="Logo du partenaire 2"
+            loading="lazy">
+            <p class="NomPartenaire">PIERRE CASTEL</p>
+        </div>
+
+         <div class="nacha-partner-item">
+          <img
+            src="MATA.jpeg"
+            alt="Logo du partenaire 2"
+            loading="lazy">
+            <p class="NomPartenaire">MATA'S AGENCY</p>
+        </div>
+
+        <div class="nacha-partner-item">
+          <img
+            src="enabel.jpeg"
+            alt="Logo du partenaire 3"
+            loading="lazy">
+            <p class="NomPartenaire">ENABEL</p>
+        </div>
+
+        <div class="nacha-partner-item">
+          <img
+            src="Ellyon&Co.jpeg"
+            alt="Logo du partenaire 4"
+            loading="lazy">
+            <p class="NomPartenaire">ELLYON&CO</p>
+        </div>
+
+        <div class="nacha-partner-item">
+          <img
+            src="Logo_Official.jpeg"
+            alt="Logo du partenaire 5"
+            loading="lazy">
+          <p class="NomPartenaireFULLTECH">FULLTECHCONGO</p>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- INVITATION À DEVENIR PARTENAIRE -->
+  <div class="section-shell">
+
+    <div class="nacha-partners-cta reveal" data-reveal>
+
+      <p class="nacha-partners-cta-eyebrow">
+        Construisons ensemble
+      </p>
+
+      <h3>
+        Devenez partenaire de <em>NACHA.</em>
+      </h3>
+
+      <p class="nacha-partners-cta-text">
+        Vous êtes une coopérative agricole, une entreprise, un supermarché,
+        un restaurant, une institution ou une organisation engagée ?
+        Rejoignez-nous pour développer une chaîne de valeur locale,
+        innovante et durable.
+      </p>
+
+      <a href="#contact" class="nacha-partners-cta-button">
+        Devenir partenaire
+      
+      </a>
+
+    </div>
+
+  </div>
+
+</section>
+
 
     <!-- 6. FOOTER -->
     <footer class="site-footer" id="contact-marque">
@@ -321,9 +653,15 @@
         </a>
         <nav class="footer-nav" aria-label="Navigation de pied de page">
           <a href="#gamme">La gamme</a>
-          <!--<a href="#production">Production</a>-->
-          <a href="#apropos">Nacha</a>
-           <!--<a href="#choix">Le choix Nacha</a>-->
+          <a href="qui-sommes-nous.html#histoire" aria-current="page">Notre Histoire</a>
+          <a href="qui-sommes-nous.html#vision">Vision</a>
+          <a href="qui-sommes-nous.html#mission">Mission</a>
+          <a href="qui-sommes-nous.html#tracabilite">Traçabilité</a>
+          <a href="#points-vente">Nos points de vente</a>
+          <a href="qui-sommes-nous.html#soutien-femmes-kwilu">Soutenir les Femmes du Kwilu</a>
+          <a href="qui-sommes-nous.html#engagements">Développement durable</a>
+          <a href="#partenaires">Devenir Partenaires</a>
+          <a href="qui-sommes-nous.html#engagements">Nos engagements</a>
         </nav>
         <div class="footer-socials-wrap"><span class="footer-social-label">Suivre la marque</span>
           <div class="footer-socials" aria-label="Réseaux sociaux officiels">
@@ -336,7 +674,7 @@
       </div>
       <div class="footer-bottom section-shell">
         <span>© <span id="copyrightYear">2026</span> NACHA. Tous droits réservés.</span>
-        <span class="footer-credit">Développé par Mercato</span>
+        <span class="footer-credit">Développé par MERCATO</span>
         <span class="legal-note"></span>
         <button type="button" class="back-top" id="backTop">Retour en haut <span aria-hidden="true">↑</span></button>
       </div>

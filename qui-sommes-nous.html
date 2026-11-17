@@ -1,0 +1,696 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#610209">
+  <meta name="description" content="Découvrez l'histoire, la vision, la mission, les engagements durables et la traçabilité de NACHA, marque agroalimentaire congolaise de FulltechCongo.">
+  <title>NACHA — Qui sommes-nous ?</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="qui-sommes-nous.css">
+  <script>
+    window.tailwind = {
+      config: {
+        theme: {
+          extend: {
+            colors: {
+              nacha: {
+                wine: '#610209',
+                amber: '#D28402',
+                ivory: '#FFF8F0'
+              }
+            },
+            fontFamily: {
+              sans: ['DM Sans', 'sans-serif'],
+              display: ['Playfair Display', 'serif']
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="nacha-about-page">
+  <a class="skip-link" href="#contenu">Aller au contenu</a>
+
+  <main id="contenu">
+    <!-- HERO — ouverture éditoriale de la page Qui sommes-nous ? -->
+    <section class="about-hero" id="haut" aria-labelledby="aboutHeroTitle">
+      <div class="about-hero__texture" aria-hidden="true"></div>
+      <div class="about-hero__glow about-hero__glow--one" aria-hidden="true"></div>
+      <div class="about-hero__glow about-hero__glow--two" aria-hidden="true"></div>
+
+      <header class="site-header" id="siteHeader">
+        <a class="brand" href="index.html#accueil" aria-label="NACHA, accueil">
+          <span class="brand-word"><img src="logo.webp" alt="NACHA" class="brand-logo"></span>
+          <span class="brand-note">LA VRAIE SAVEUR AFRICAINE</span>
+        </a>
+        <nav class="desktop-nav" aria-label="Navigation principale">
+          <a href="index.html#accueil">Accueil</a>
+          <a href="index.html#gamme">La gamme</a>
+          <a href="#histoire" aria-current="page">Qui sommes-nous</a>
+          <a href="#tracabilite">Traçabilité</a>
+          <a href="index.html##points-vente">Distribution</a>
+          <a href="index.html##partenaires">Partenaires</a>
+        </nav>
+        <button class="cart-trigger" id="cartTrigger" type="button" aria-label="Ouvrir le panier" aria-controls="cartDrawer" aria-expanded="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M3 4h2l2.1 11.1a2 2 0 0 0 2 1.6h7.8a2 2 0 0 0 1.9-1.4L21 8H6" />
+            <circle cx="10" cy="20" r="1" /><circle cx="18" cy="20" r="1" />
+          </svg>
+          <span class="cart-trigger-label">Panier</span>
+          <span class="cart-count" id="cartCount" aria-live="polite">0</span>
+        </button>
+        <button class="menu-toggle" id="menuToggle" type="button" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="mobileNav">
+          <span></span><span></span>
+        </button>
+      </header>
+
+      <nav class="mobile-nav" id="mobileNav" aria-label="Navigation mobile" inert>
+          <a href="index.html#accueil">Accueil</a>
+          <a href="index.html#gamme">La gamme</a>
+          <a href="#histoire" aria-current="page">Qui sommes-nous</a>
+          <a href="#tracabilite">Traçabilité</a>
+          <a href="index.html##points-vente">Distribution</a>
+          <a href="index.html##partenaires">Partenaires</a>
+      </nav>
+
+      <div class="about-hero__inner section-shell">
+        <div class="about-hero__copy">
+          <h1 class="about-hero__title reveal" data-reveal id="aboutHeroTitle">Qui <em>sommes-nous&nbsp;?</em></h1>
+          <p class="about-hero__lead reveal" data-reveal>Une histoire de goût, de mémoire et d'ambition. Une recette familiale devenue le point de départ d'une marque congolaise tournée vers l'avenir.</p>
+          <div class="about-hero__actions reveal" data-reveal>
+            <a class="about-button about-button--primary" href="#histoire">Découvrir notre histoire</a>
+            <a class="about-text-link" href="#engagements">Nos engagements</a>
+          </div>
+        
+        </div>
+
+        <div class="about-hero__visual" data-three-scene aria-label="Composition visuelle de l'univers NACHA">
+          <div class="about-hero__ring about-hero__ring--outer" aria-hidden="true"></div>
+          <div class="about-hero__ring about-hero__ring--inner" aria-hidden="true"></div>
+            <img src="piment_complet.jpg" alt="Préparation culinaire accompagnée de NACHA" data-fallback-image fetchpriority="high">
+    
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Navigation de lecture — repères internes de la page -->
+    <nav class="about-subnav" aria-label="Sections de la page">
+      <div class="about-subnav__inner section-shell">
+        <a href="#histoire">Histoire</a>
+        <a href="#vision">Vision</a>
+        <a href="#mission">Mission</a>
+        <a href="#engagements">Développement durable</a>
+        <a href="#tracabilite">Traçabilité</a>
+      </div>
+    </nav>
+
+    <!-- HISTOIRE -->
+    <section class="story-section" id="histoire" aria-labelledby="storyTitle">
+      <div class="story-layout section-shell">
+        <div class="story-visual-wrap reveal" data-reveal>
+            <img src="kami.jpeg" alt="Un produit de la gamme NACHA" data-fallback-image loading="lazy">
+        </div>
+
+        <div class="story-copy">
+          <p class="about-eyebrow reveal" data-reveal>Histoire de NACHA</p>
+          <h2 class="about-section-title reveal" data-reveal id="storyTitle">Une histoire de goût, de mémoire <em>et d'ambition.</em></h2>
+          <p class="story-copy__lead reveal" data-reveal>NACHA est née d'une histoire familiale.</p>
+          <p class="reveal" data-reveal>À l'origine, une recette de piment préparée par la mère du fondateur, reconnue par son entourage pour son goût unique. Cette recette, devenue un hommage, a inspiré la création d'une marque capable de rendre ce piment accessible à un plus grand nombre de personnes.</p>
+          <p class="reveal" data-reveal>Aujourd'hui, NACHA est une marque agroalimentaire de FulltechCongo, spécialisée dans la transformation du piment sec et des épices locales. Notre ambition est de faire évoluer une tradition artisanale vers une entreprise moderne, créatrice de valeur, d'emplois et de fierté locale.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- VISION -->
+    <section class="vision-section" id="vision" aria-labelledby="visionTitle">
+      <div class="vision-section__ornament" aria-hidden="true"><span></span><span></span><span></span></div>
+      <div class="vision-layout section-shell">
+        <div class="vision-meta reveal" data-reveal>
+          <p class="about-eyebrow about-eyebrow--light">Notre vision</p>
+        </div>
+        <div class="vision-copy">
+          <h2 class="vision-title reveal" data-reveal id="visionTitle">Faire de NACHA une référence <em>congolaise, puis panafricaine.</em></h2>
+          <p class="vision-copy__text reveal" data-reveal>Dans la transformation de produits naturels, NACHA veut être reconnue pour sa qualité, son innovation, son impact social et sa contribution à la valorisation de l'agriculture locale.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- MISSION -->
+    <section class="mission-section" id="mission" aria-labelledby="missionTitle">
+      <div class="section-shell">
+        <div class="mission-heading">
+          <div>
+            <p class="about-eyebrow reveal" data-reveal>Notre mission</p>
+            <br>
+            <h2 class="about-section-title reveal" data-reveal id="missionTitle">Ce que nous faisons, <em>chaque jour.</em></h2>
+          </div>
+          <p class="mission-heading__intro reveal" data-reveal>Notre mission guide la façon dont nous préparons nos produits, travaillons avec les acteurs locaux et développons notre activité.</p>
+        </div>
+
+        <div class="mission-grid">
+          <article class="mission-card reveal" data-reveal>
+            <span class="mission-card__number">01</span>
+            <span class="mission-card__icon" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M24 39C9 31 9 13 24 8c15 5 15 23 0 31Z"/><path d="M24 38c0-11 0-19 0-27M24 27c-5-5-8-6-12-6m12 1c4-5 7-7 12-8"/></svg></span>
+            <h3>Saveur et accessibilité</h3>
+            <p>Proposer un piment savoureux, propre et accessible.</p>
+          </article>
+          <article class="mission-card reveal" data-reveal>
+            <span class="mission-card__number">02</span>
+            <span class="mission-card__icon" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M8 38h32M12 38V22l12-9 12 9v16M18 38V27h12v11M7 22l17-13 17 13"/><path d="M24 9V5"/></svg></span>
+            <h3>Valoriser les acteurs locaux</h3>
+            <p>Valoriser les producteurs et les épices locales.</p>
+          </article>
+          <article class="mission-card reveal" data-reveal>
+            <span class="mission-card__number">03</span>
+            <span class="mission-card__icon" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M24 5 39 11v11c0 10-6 17-15 21C15 39 9 32 9 22V11Z"/><path d="m16 24 5 5 11-12"/></svg></span>
+            <h3>Hygiène et qualité</h3>
+            <p>Garantir une transformation attentive à l'hygiène et à la qualité.</p>
+          </article>
+          <article class="mission-card reveal" data-reveal>
+            <span class="mission-card__number">04</span>
+            <span class="mission-card__icon" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M6 18h36v23H6zM11 18l4-9h18l4 9M16 29h16M24 18v23"/><path d="M11 9h26"/></svg></span>
+            <h3>Distribution moderne</h3>
+            <p>Développer des circuits de distribution modernes.</p>
+          </article>
+          <article class="mission-card reveal" data-reveal>
+            <span class="mission-card__number">05</span>
+            <span class="mission-card__icon" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M24 41V18M24 28c-9 0-15-6-15-15 9 0 15 6 15 15ZM24 22c0-9 6-15 15-15 0 9-6 15-15 15Z"/><path d="M9 41h30"/></svg></span>
+            <h3>Agriculture résiliente</h3>
+            <p>Contribuer à une agriculture congolaise durable et résiliente.</p>
+          </article>
+          <article class="mission-card mission-card--accent reveal" data-reveal>
+            <span class="mission-card__number">06</span>
+            <span class="mission-card__icon" aria-hidden="true"><svg viewBox="0 0 48 48"><circle cx="18" cy="16" r="7"/><circle cx="33" cy="19" r="5"/><path d="M5 40c0-8 5-13 13-13s13 5 13 13M29 29c8-2 14 3 14 11"/></svg></span>
+            <h3>Opportunités pour les communautés</h3>
+            <p>Créer des opportunités économiques pour les communautés locales.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- DÉVELOPPEMENT DURABLE -->
+    <section class="impact-section" id="engagements" aria-labelledby="impactTitle">
+      <div class="impact-section__grain" aria-hidden="true"></div>
+      <div class="impact-layout section-shell">
+        <div class="impact-intro">
+          <p class="about-eyebrow about-eyebrow--light reveal" data-reveal>Notre contribution au développement durable</p>
+          <h2 class="impact-title reveal" data-reveal id="impactTitle">Grandir avec notre <em>territoire.</em></h2>
+          <p class="impact-intro__text reveal" data-reveal>Pour NACHA, la réussite ne se mesure pas seulement en ventes. Elle se mesure aussi par notre capacité à soutenir une agriculture plus forte, à réduire les pertes et à créer de la valeur là où elle est produite.</p>
+          <div class="impact-statement reveal" data-reveal><span class="impact-statement__line"></span><p>En choisissant NACHA, vous encouragez une marque qui veut rendre l'agriculture congolaise plus résiliente, plus structurée et plus porteuse d'avenir.</p></div>
+        </div>
+
+        <div class="impact-commitments">
+          <div class="impact-commitments__head reveal" data-reveal><span>NOS ENGAGEMENTS</span><i></i><span>04 POINTS</span></div>
+          <article class="impact-item reveal" data-reveal>
+            <span class="impact-item__number">01</span>
+            <div><h3>Soutenir l'agriculture locale</h3><p>Sécuriser l'approvisionnement en piment et valoriser les producteurs.</p></div>
+          </article>
+          <article class="impact-item reveal" data-reveal>
+            <span class="impact-item__number">02</span>
+            <div><h3>Réduire les pertes après récolte</h3><p>Agir grâce au séchage, à la transformation et à un meilleur conditionnement.</p></div>
+          </article>
+          <article class="impact-item reveal" data-reveal>
+            <span class="impact-item__number">03</span>
+            <div><h3>Améliorer l'emballage</h3><p>Privilégier des solutions plus responsables et biodégradables.</p></div>
+          </article>
+          <article class="impact-item reveal" data-reveal>
+            <span class="impact-item__number">04</span>
+            <div><h3>Créer des emplois et des compétences</h3><p>Dans la production, la distribution, le marketing et la logistique.</p></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- TRAÇABILITÉ -->
+    <section class="trace-section" id="tracabilite" aria-labelledby="traceTitle">
+      <div class="section-shell">
+        <div class="trace-heading">
+          <div>
+            <p class="about-eyebrow reveal" data-reveal>Notre production</p>
+            <h2 class="about-section-title reveal" data-reveal id="traceTitle">Traçabilité du champ <em>à votre assiette.</em></h2>
+          </div>
+          <div class="trace-heading__copy reveal" data-reveal>
+            <p>La qualité commence bien avant l'emballage. Chez NACHA, nous travaillons à rapprocher chaque consommateur de l'origine de son produit.</p>
+            <span class="trace-heading__coordinates">DE L'ORIGINE AU PRODUIT FINI</span>
+          </div>
+        </div>
+
+        <div class="trace-progress" aria-hidden="true"><span id="traceProgress"></span></div>
+        <div class="trace-grid">
+          <article class="trace-step is-current reveal" data-reveal>
+            <div class="trace-step__top"><span class="trace-step__number">01</span><span class="trace-step__dot"></span></div>
+            <figure class="trace-step__image trace-step__image--culture media-frame" data-media-frame>
+              <img src="recolte_fonBlanc.webp" alt="Piments au stade de la récolte" data-fallback-image loading="lazy">
+              <span class="trace-step__image-label">LE TERROIR</span>
+            </figure>
+            <div class="trace-step__copy"><span class="trace-step__eyebrow">Origine</span><h3>Culture</h3><p>Le piment est produit avec l'appui de producteurs locaux, notamment dans les zones rurales partenaires.</p></div>
+          </article>
+          <article class="trace-step reveal" data-reveal>
+            <div class="trace-step__top"><span class="trace-step__number">02</span><span class="trace-step__dot"></span></div>
+            <figure class="trace-step__image trace-step__image--harvest media-frame" data-media-frame>
+              <img src="selection.webp" alt="Piments sélectionnés pour leur qualité" data-fallback-image loading="lazy">
+              <span class="trace-step__image-label">SÉLECTION</span>
+            </figure>
+            <div class="trace-step__copy"><span class="trace-step__eyebrow">Approvisionnement</span><h3>Récolte et approvisionnement</h3><p>Les matières premières sont sélectionnées pour leur qualité et leur potentiel aromatique.</p></div>
+          </article>
+          <article class="trace-step reveal" data-reveal>
+            <div class="trace-step__top"><span class="trace-step__number">03</span><span class="trace-step__dot"></span></div>
+            <figure class="trace-step__image trace-step__image--transform media-frame" data-media-frame>
+              <img src="piment_molou.webp" alt="Piment transformé et moulu" data-fallback-image loading="lazy">
+              <span class="trace-step__image-label">TRANSFORMATION</span>
+            </figure>
+            <div class="trace-step__copy"><span class="trace-step__eyebrow">Savoir-faire</span><h3>Transformation</h3><p>Le piment est séché, broyé, mélangé aux épices locales et soumis à un triple tamisage.</p></div>
+          </article>
+          <article class="trace-step reveal" data-reveal>
+            <div class="trace-step__top"><span class="trace-step__number">04</span><span class="trace-step__dot"></span></div>
+            <figure class="trace-step__image trace-step__image--pack media-frame" data-media-frame>
+              <img src="piment_bocal_5.jpg" alt="Produit NACHA conditionné" data-fallback-image loading="lazy">
+              <span class="trace-step__image-label">CONDITIONNEMENT</span>
+            </figure>
+            <div class="trace-step__copy"><span class="trace-step__eyebrow">Protection du produit</span><h3>Conditionnement</h3><p>Le produit est emballé pour protéger son goût, sa propreté et sa conservation.</p></div>
+          </article>
+          <article class="trace-step reveal" data-reveal>
+            <div class="trace-step__top"><span class="trace-step__number">05</span><span class="trace-step__dot"></span></div>
+            <figure class="trace-step__image trace-step__image--distribution media-frame" data-media-frame>
+              <img src="platAvecNacha_3.jpg" alt="Plat accompagné de NACHA" data-fallback-image loading="lazy">
+              <span class="trace-step__image-label">À VOTRE TABLE</span>
+            </figure>
+            <div class="trace-step__copy"><span class="trace-step__eyebrow">Accès au produit</span><h3>Distribution</h3><p>NACHA arrive dans les supermarchés, épiceries, restaurants, marchés et points de vente partenaires.</p></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- SIGNATURE DE MARQUE -->
+    <section class="about-closing" aria-label="Signature de NACHA">
+      <div class="about-closing__inner section-shell reveal" data-reveal>
+        <span class="about-closing__overline">Une origine. Une ambition. Une saveur.</span>
+        <p>NACHA, <em>la vraie saveur africaine.</em></p>
+        <a href="index.html#gamme" class="about-button about-button--light">Découvrir la gamme</a>
+      </div>
+    </section>
+
+
+<!-- =====================================================
+     SOUTIEN AUX FEMMES PRODUCTRICES DU KWILU
+     ===================================================== -->
+
+<section class="kwilu-support" id="soutien-femmes-kwilu">
+
+  <div class="kwilu-support__inner section-shell">
+
+    <!-- INTRODUCTION -->
+    <div class="kwilu-support__layout">
+
+      <!-- VISUEL -->
+      <div class="kwilu-support__visual reveal" data-reveal>
+
+        
+
+          <!-- Remplacer par une photographie réelle des productrices du Kwilu -->
+          <img
+            src="femmes.jpg"
+            alt="Femmes productrices agricoles dans le Kwilu"
+            loading="lazy">
+
+          <div class="kwilu-support__photo-overlay"></div>
+
+      </div>
+
+
+      <!-- TEXTE INTRODUCTIF -->
+      <div class="kwilu-support__content reveal" data-reveal>
+
+        <p class="about-eyebrow about-eyebrow--light">
+          Notre engagement pour les femmes du Kwilu
+        </p>
+
+        <h2 class="kwilu-support__title">
+          Cultiver l’autonomie,
+          <em>récolter l’avenir…</em>
+        </h2>
+
+        <p class="kwilu-support__lead">
+          Derrière chaque récolte, il y a le travail, le courage
+          et le savoir-faire de femmes qui font vivre leur terre.
+        </p>
+
+        <p>
+          Dans le Kwilu, de nombreuses femmes ont la terre,
+          le courage et le savoir-faire. Ce qui leur manque souvent,
+          ce sont les moyens de produire davantage, de mieux
+          conserver leurs récoltes et de vendre à un prix juste.
+        </p>
+
+        <p>
+          À travers le préfinancement des cultures de piment,
+          NACHA souhaite accompagner des femmes organisées
+          en coopératives agricoles. L’objectif est simple :
+          leur donner les moyens de transformer leur travail
+          en revenus durables.
+        </p>
+
+        <div class="kwilu-support__signature">
+          <strong>Le travail des femmes mérite des moyens à sa hauteur.</strong>
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- BESOINS DE FINANCEMENT -->
+    <div class="kwilu-support__needs reveal" data-reveal>
+
+      <div class="kwilu-support__section-heading">
+
+        <p class="kwilu-support__eyebrow">
+          Votre contribution peut faire la différence
+        </p>
+
+        <h3>
+          Votre soutien peut aider à <em>financer</em>
+        </h3>
+
+        <p>
+          Chaque contribution peut participer au développement
+          des activités agricoles et à l'amélioration des conditions
+          de production des femmes accompagnées.
+        </p>
+
+      </div>
+
+
+      <div class="kwilu-support__needs-grid">
+
+        <article class="kwilu-support__need">
+          <span class="kwilu-support__need-number">01</span>
+          <div>
+            <h4>Des outils agricoles</h4>
+            <p>Des houes et des équipements essentiels pour faciliter le travail aux champs.</p>
+          </div>
+        </article>
+
+        <article class="kwilu-support__need">
+          <span class="kwilu-support__need-number">02</span>
+          <div>
+            <h4>Des semences de qualité</h4>
+            <p>Des semences adaptées pour accompagner les cultures de piment.</p>
+          </div>
+        </article>
+
+        <article class="kwilu-support__need">
+          <span class="kwilu-support__need-number">03</span>
+          <div>
+            <h4>Des formations agricoles</h4>
+            <p>Un apprentissage des techniques agricoles améliorées et des bonnes pratiques.</p>
+          </div>
+        </article>
+
+        <article class="kwilu-support__need">
+          <span class="kwilu-support__need-number">04</span>
+          <div>
+            <h4>Un meilleur accompagnement</h4>
+            <p>Des moyens pour améliorer les récoltes, la conservation et réduire les pertes.</p>
+          </div>
+        </article>
+
+        <article class="kwilu-support__need">
+          <span class="kwilu-support__need-number">05</span>
+          <div>
+            <h4>Un accès plus stable au marché</h4>
+            <p>Un débouché commercial grâce à l'approvisionnement de NACHA.</p>
+          </div>
+        </article>
+
+      </div>
+
+    </div>
+
+
+    <!-- IMPACT HUMAIN -->
+    <div class="kwilu-support__impact reveal" data-reveal>
+
+      <div class="kwilu-support__impact-item">
+        <span class="kwilu-support__impact-symbol">✳</span>
+        <p>
+          Derrière chaque outil donné,
+          <strong>il y a une femme qui gagne en autonomie.</strong>
+        </p>
+      </div>
+
+      <div class="kwilu-support__impact-item">
+        <span class="kwilu-support__impact-symbol">✳</span>
+        <p>
+          Derrière chaque semence plantée,
+          <strong>il y a une famille qui renforce sa sécurité alimentaire.</strong>
+        </p>
+      </div>
+
+      <div class="kwilu-support__impact-item">
+        <span class="kwilu-support__impact-symbol">✳</span>
+        <p>
+          Derrière chaque formation,
+          <strong>il y a une communauté qui construit une prospérité durable.</strong>
+        </p>
+      </div>
+
+    </div>
+
+
+    <!-- APPEL À LA CONTRIBUTION -->
+    <div class="kwilu-support__cta reveal" data-reveal>
+
+      <div class="kwilu-support__cta-content">
+
+        <p class="kwilu-support__eyebrow">
+          Ensemble, faisons grandir le Kwilu
+        </p>
+
+        <h3>
+          Soutenir NACHA, c’est aussi <em>faire grandir des vies.</em>
+        </h3>
+
+        <p>
+          Soutenir NACHA, c’est participer à une agriculture qui nourrit
+          les familles, valorise le travail des femmes et fait grandir
+          le Kwilu.
+        </p>
+
+      </div>
+
+      <button
+        type="button"
+        class="kwilu-support__button"
+        id="kwilu-contribute-btn"
+        aria-expanded="false"
+        aria-controls="kwilu-payment-details">
+
+        <span class="kwilu-support__button-label">Contribuer</span>
+      </button>
+
+
+      <!-- COORDONNÉES DE CONTRIBUTION -->
+      <div
+        class="kwilu-support__payment"
+        id="kwilu-payment-details"
+        hidden>
+
+        <div class="kwilu-support__payment-heading">
+          <p>Nos coordonnées pour votre contribution</p>
+        </div>
+
+        <div class="kwilu-support__payment-grid">
+
+          <!-- M-PESA -->
+          <div class="kwilu-support__payment-card">
+
+            <span class="kwilu-support__payment-label">
+              Contribution mobile
+            </span>
+
+            <h4>M-Pesa</h4>
+
+            <span class="kwilu-support__payment-value">
+              +243 81 456 67 657
+            </span>
+
+            <p>
+              Titulaire : <strong>NACHA</strong>
+            </p>
+
+          </div>
+
+
+          <!-- COMPTE BANCAIRE -->
+          <div class="kwilu-support__payment-card">
+
+            <span class="kwilu-support__payment-label">
+              Virement bancaire
+            </span>
+
+            <h4>Compte bancaire</h4>
+
+            <span class="kwilu-support__payment-value">
+              4545 4545 4545 4544 4545
+            </span>
+
+            <p>
+              Banque : <strong>EQUITY BCDC</strong>
+            </p>
+
+            <p>
+              Titulaire : <strong>NACHA</strong>
+            </p>
+
+          </div>
+
+        </div>
+
+        <p class="kwilu-support__payment-note">
+          Merci de votre engagement aux côtés des femmes productrices du Kwilu.
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+    <!-- PANIER PARTAGÉ AVEC LA PAGE PRINCIPALE -->
+    <div class="cart-backdrop" id="cartBackdrop" hidden></div>
+    <aside class="cart-drawer" id="cartDrawer" role="dialog" aria-modal="true" aria-labelledby="cartTitle" aria-hidden="true" inert>
+      <div class="cart-drawer-head">
+        <div><p class="eyebrow"><span class="eyebrow-mark"></span> NACHA · Commande</p><h2 id="cartTitle">Mon panier</h2></div>
+        <button type="button" class="cart-close" id="cartClose" aria-label="Fermer le panier">×</button>
+      </div>
+      <div class="cart-items" id="cartItems" aria-live="polite"></div>
+      <p class="cart-empty" id="cartEmpty">Votre panier est vide. Découvrez la gamme NACHA pour commencer.</p>
+      <div class="cart-drawer-footer">
+        <button type="button" class="cart-clear" id="cartClear">Vider le panier</button>
+        <div class="cart-total-row"><span>Sous-total</span><strong id="cartSubtotal">—</strong></div>
+        <p class="cart-status" id="cartStatus" role="status" aria-live="polite"></p>
+        <button type="button" class="cart-checkout" id="checkoutWhatsapp">Confirmer la commande sur WhatsApp</button>
+        <p class="cart-whatsapp-note">La commande sera préparée dans WhatsApp. Vous devrez envoyer le message pour la transmettre à NACHA.</p>
+      </div>
+    </aside>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer about-footer" id="pied-de-page">
+    <div class="footer-feature section-shell">
+      <div class="footer-orbit" aria-hidden="true"></div>
+      <div class="footer-pepper footer-image-carousel" id="footerImageCarousel" role="group" aria-label="Images de l'univers culinaire NACHA">
+        <img class="footer-carousel-image is-visible" id="footerCarouselImage" src="platAvecNacha_1.jpg" alt="" aria-hidden="true">
+        <div class="footer-carousel-pagination" id="footerCarouselPagination" aria-label="Choisir une image"></div>
+      </div>
+      <div class="footer-feature-content reveal" data-reveal>
+        <p class="eyebrow eyebrow--light">La signature des saveurs</p>
+        <h2>Des racines fortes. <em>Un avenir à partager.</em></h2>
+        <a class="footer-cta" href="index.html#gamme">Découvrir nos produits</a>
+      </div>
+    </div>
+
+    <div class="footer-main section-shell">
+      <a class="brand brand--footer" href="index.html#accueil" aria-label="NACHA, accueil">
+        <span class="brand-word"><img src="logo.webp" alt="NACHA" class="brand-logo"></span>
+        <span class="brand-note">LA VRAIE SAVEUR AFRICAINE</span>
+      </a>
+      <nav class="footer-nav" aria-label="Navigation de pied de page">
+          <a href="index.html#accueil">Accueil</a>
+          <a href="index.html#gamme">La gamme</a>
+          <a href="#histoire" aria-current="page">Notre Histoire</a>
+          <a href="#vision">Vision</a>
+          <a href="#mission">Mission</a>
+          <a href="qui-sommes-nous.html#tracabilite">Traçabilité</a>
+          <a href="qui-sommes-nous.html#points-vente">Nos points de vente</a>
+          <a href="#soutien-femmes-kwilu">Soutenir les Femmes du Kwilu</a>
+          <a href="#engagements">Développement durable</a>
+          <a href="index.html#partenaires">Devenir Partenaires</a>
+          <a href="#engagements">Nos engagements</a>
+      </nav>
+      <div class="footer-socials-wrap">
+        <span class="footer-social-label">Suivre la marque</span>
+        <div class="footer-socials" aria-label="Réseaux sociaux officiels">
+          <a data-social="tiktok" aria-label="TikTok — URL officielle à renseigner" aria-disabled="true" tabindex="-1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.2 3v11.15a4.1 4.1 0 1 1-3.2-4V6.7a7.4 7.4 0 1 0 6.6 7.35V9.6a8.7 8.7 0 0 0 3.4.7V7a5.5 5.5 0 0 1-3.4-1.4A5.6 5.6 0 0 1 16 3z"/></svg></a>
+          <a data-social="x" aria-label="X — URL officielle à renseigner" aria-disabled="true" tabindex="-1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.9 2H22l-6.8 7.8L23.2 22h-6.3L12 14.8 5.7 22H2.5l7.3-8.4L1.9 2h6.5l4.5 6.7zm-1.1 17.8h1.7L7.3 4.1H5.5z"/></svg></a>
+          <a data-social="instagram" aria-label="Instagram — URL officielle à renseigner" aria-disabled="true" tabindex="-1"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle class="social-dot" cx="17.6" cy="6.7" r="1"/></svg></a>
+          <a data-social="facebook" aria-label="Facebook — URL officielle à renseigner" aria-disabled="true" tabindex="-1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.2 21v-8h2.7l.4-3.1h-3.1v-2c0-.9.3-1.5 1.6-1.5h1.7V3.6c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.1H8v3.1h2.8v8z"/></svg></a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom section-shell">
+      <span>© <span id="copyrightYear">2026</span> NACHA. Tous droits réservés.</span>
+      <span class="footer-credit">Développé par MERCATO</span>
+      <span class="legal-note">Mentions légales et confidentialité à compléter avant publication.</span>
+      <button type="button" class="back-top" id="backTop">Retour en haut <span aria-hidden="true">↑</span></button>
+    </div>
+  </footer>
+
+
+<script src="config.js"></script>
+
+<script>
+  if (window.NACHA_CONFIG) {
+    window.NACHA_CONFIG.heroSlides = [];
+  }
+</script>
+
+<script src="main.js"></script>
+<script type="module" src="qui-sommes-nous.js"></script>
+
+<!-- NACHA : GESTION DU BOUTON CONTRIBUER -->
+<script>
+(() => {
+
+  const button = document.getElementById("kwilu-contribute-btn");
+  const paymentDetails = document.getElementById("kwilu-payment-details");
+
+  if (!button || !paymentDetails) {
+    console.error("NACHA : bouton ou coordonnées de paiement introuvables.");
+    return;
+  }
+
+  const buttonLabel = button.querySelector(
+    ".kwilu-support__button-label"
+  );
+
+  if (!buttonLabel) {
+    console.error("NACHA : texte du bouton introuvable.");
+    return;
+  }
+
+  button.addEventListener("click", () => {
+
+    const isOpen = button.getAttribute("aria-expanded") === "true";
+    const shouldOpen = !isOpen;
+
+    // Afficher ou masquer les coordonnées
+    paymentDetails.hidden = !shouldOpen;
+
+    // Mettre à jour l'accessibilité
+    button.setAttribute("aria-expanded", String(shouldOpen));
+
+    // Modifier le texte du bouton
+    buttonLabel.textContent = shouldOpen
+      ? "Masquer les coordonnées"
+      : "Contribuer";
+
+  });
+
+})();
+</script>
+
+</body>
+</html>
+

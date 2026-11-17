@@ -27,40 +27,189 @@ window.NACHA_CONFIG = {
   products: [
     {
       id: 'nacha-60g', title: 'NACHA SEBENE', weight: '60 g', kicker: 'Le format découverte',
-      description: 'Moyennement piquant avec une saveur aromatisante à base du mukubi, une épice aux propriétés thérapeutiques exceptionnelles.',
+      description: 'Une poudre de piment moyennement piquant élaborée à partir de piment à bec long de type Cayenne, associé au Mukubi, l\’oignon sauvage. Pensé pour le quotidien des familles, des restaurants, grilleries etc, il apporte du goût, du caractère et une touche authentique à chaque repas.',
       facts: ['Format 60 grammes'], image: 'piment_bocal_6.jpeg', imageAlt: 'Produit NACHA petit format 60 grammes',
-        // Photographies supplémentaires du même produit.
-  images: [
-    { src: 'groupe_piment_bocal_7.jpeg', alt: '' }
-  ],
+        // images supplémentaires du même produit.
+      images: [
+        { src: 'groupe_piment_bocal_7.jpeg', alt: '' }
+      ],
+      oldPrice: 5550, // Ancien prix réel, à renseigner en FC
+      usage: 'apporte une saveur locale profonde et parfumée. Idéal pour les sauces, maboké, viandes (grillades), poissons et plats traditionnels. Format familial pour l\’utilisation quotidienne à la maison : sauces, légumes, viande, poisson et repas en famille.',
+      composition: 'Piment, oignons, sel, mukubi',
       price: 4000, theme: 'product-tone--small'
     },
 
     {
       id: 'nacha-red-100g', title: 'NACHA ELENGI', weight: '100 g', kicker: 'La version piquante',
-      description: 'Piquant avec une saveur aromatisante à base du poivre sauvage des forêts de la RDC. Ce type de poivre favorise la digestion et possède des vertus antibactériennes.',
+      description: 'Une poudre de piment très piquant élaborée à partir de piment à bec long de type Cayenne, associé au poivre sauvage (ketshu). Pensé pour le quotidien des familles, des restaurants, grilleries etc,. Il apporte du goût, du caractère et une touche authentique à chaque repas.',
       facts: ['Version piquante', 'Sachet rouge · 100 grammes'], image: 'piment_sachet_rouge.jpg', imageAlt: 'Sachet rouge NACHA 100 grammes',
+      oldPrice: 8500, // Ancien prix réel, à renseigner en FC
+      usage: 'Donne un goût intense et plus relevé. Recommandé pour les brochettes, viandes rouges, grillades et préparations épicées. Format premium destiné aux familles consommatrices de piment, restaurants, ngandas, traiteurs et autres professionnels de la restauration. ', 
+      composition: 'Poivre,piment, sel',
       price: 6500, theme: 'product-tone--red'
     },
 
     {
-      id: 'nacha-green-100g', title: 'NACHA SEBENE vert', weight: '100 g', kicker: 'La spécialité Mukubi',
-      description: 'Moyennement piquant avec une saveur aromatisante à base du mukubi, une épice aux propriétés thérapeutiques exceptionnelles.',
+      id: 'nacha-green-100g', title: 'NACHA SEBENE', weight: '100 g', kicker: 'La spécialité Mukubi',
+      description: 'Une poudre de piment moyennement piquant élaborée à partir de piment à bec long de type Cayenne, associé au Mukubi, l\’oignon sauvage. Pensé pour le quotidien des familles, des restaurants, grilleries etc, il apporte du goût, du caractère et une touche authentique à chaque repas.',
       facts: ['Spécialité Mukubi', 'Sachet vert · 100 grammes'], image: 'piment_vert.jpg', imageAlt: 'Sachet vert NACHA 100 grammes',
         images: [
-    { src: 'Nacha_Vert.png', alt: 'Vue arrière du produit NACHA 60 g' },
-    // { src: 'photo-60g-detail.jpeg', alt: 'Détail du produit NACHA 60 g' },
-    // { src: 'photo-60g-packaging.jpeg', alt: 'Présentation du produit NACHA 60 g' }
+    { src: 'Nacha_Vert.png', alt: 'Vue arrière du produit NACHA 60 g' }
   ],
+      oldPrice: 7550,
+      usage: 'Apporte une saveur locale profonde et parfumée. Idéal pour les sauces, maboké, viandes (grillades), poissons et plats traditionnels. Format premium destiné aux familles consommatrices de piment, restaurants, ngandas, et autres professionnels de la restauration.',
+      composition: 'Piment, oignons, mukubi, sel',
       price: 6500, theme: 'product-tone--green'
     },
+
     {
-      id: 'nacha-portable-15g', title: 'NACHA portatif', weight: '15 g', kicker: 'Le format à emporter',
-      description: 'Le petit format portatif de Nacha, qui vous accompagne partout.',
-      facts: ['Format portatif', '15 grammes'], image: 'piment_petit_format.jpg', imageAlt: 'Format portatif NACHA 15 grammes',
+      id: 'nacha-portable-5g', title: 'NACHA portatif', weight: '5 g', kicker: 'Le format à emporter',
+      description: 'Format individuel, pratique et accessible. Pour les snacks, kiosques, repas rapides, œufs, brochettes et vente à emporter.',
+      facts: ['Format portatif', '5 grammes'], image: 'piment_petit_format.jpg', imageAlt: 'Format portatif NACHA 5 grammes',
+      oldPrice: 6550, // Ancien prix réel, à renseigner en FC
+      usage: 'Le petit format portatif de Nacha, qui vous accompagne partout.',      // Conseils d'utilisation validés par NACHA
+      composition: 'sel,piment',
       price: 5000, theme: 'product-tone--portable'
-    }
+    },
+
+    {
+      id: 'nacha-mix-50g', title: 'NACHA MIX AIL ET OIGNON', weight: '50 g', kicker: 'Le format MIX',
+      description: 'Format individuel, pratique et accessible. Pour les snacks, kiosques, repas rapides, œufs, brochettes.',
+      facts: ['50 grammes'], image: 'piment_bocal.jpg', imageAlt: 'Format Mix NACHA 50 grammes',
+      oldPrice: 6550, // Ancien prix réel, à renseigner en FC
+      usage: 'Le format Mix délicieux de Nacha pour les snacks, repas rapides.',
+      composition: 'sel,piment',
+      price: 5000, theme: 'product-tone--portable'
+    },
+
+      {
+      id: 'nacha-ail-50g', title: 'NACHA AIL EN POUDRE', weight: '50 g', kicker: 'Le format Ail en Poudre',
+      description: 'Format individuel, pratique et accessible. Pour les snacks, kiosques, repas rapides, œufs, brochettes.',
+      facts: ['50 grammes'], image: 'AIL_POUDRE.jpeg', imageAlt: 'Format AIL NACHA 50 grammes',
+      oldPrice: 6550, // Ancien prix réel, à renseigner en FC
+      usage: 'Le format Mix délicieux de Nacha pour les snacks, repas rapides.',
+      composition: 'sel,piment',
+      price: 5000, theme: 'product-tone--portable'
+    },
+
+    {
+      id: 'nacha-ginger-100g', title: 'NACHA GINGEMBRE', weight: '100 g', kicker: 'La spécialité Gingembre',
+      description: 'Une poudre de piment moyennement piquant élaborée à partir de piment à bec long de type Cayenne, associé au Gingembre, l\’oignon sauvage. Pensé pour le quotidien des familles, des restaurants, grilleries etc, il apporte du goût, du caractère et une touche authentique à chaque repas.',
+      facts: ['Spécialité Gingembre', 'Sachet vert · 100 grammes'], image: 'GINGEMBRE_NACHA.jpeg', imageAlt: 'NACHA GINGEMBRE',
+      oldPrice: 7550,
+      usage: 'Apporte une saveur locale profonde et parfumée. Idéal pour les sauces, maboké, viandes (grillades), poissons et plats traditionnels. Format premium destiné aux familles consommatrices de piment, restaurants, ngandas, et autres professionnels de la restauration.',
+      composition: 'Piment, oignons, Gingembre, sel',
+      price: 6500, theme: 'product-tone--green'
+    },
   ],
+
+
+// =====================================================
+// GOOGLE MAPS — NACHA
+// =====================================================
+
+// Identifiant de démonstration pour les tests.
+googleMapsApiKey: 'AIzaSyCxSqUu7cPEJ0HbzIfTBvPm3oL5u413Rnc',
+googleMapsMapId: 'c7535d4652077645cfe9e067',
+
+storeLocations: [
+
+  {
+    id: 'la-prima',
+    number: '01',
+
+    commune: 'Gombe',
+    type: 'Supermarché partenaire',
+
+    name: 'La Prima',
+
+    address:
+      'Kinshasa Mall, Avenue du 24 Novembre, Gombe, Kinshasa',
+
+    landmark:
+      'À l’intérieur du Kinshasa Mall',
+
+    phone: '',
+
+    coverage: 'Gombe',
+
+    hours:
+      'Tous les jours : 08h00 – 22h00 (horaires indicatifs)',
+
+    availability:
+      'Disponibilité des produits à confirmer directement en magasin.',
+
+    position: {
+      lat: -4.31538,
+      lng: 15.29187
+    }
+  },
+
+  {
+    id: 'gg-mart',
+    number: '02',
+
+    commune: 'Gombe',
+    type: 'Supermarché partenaire',
+
+    name: 'GG Mart',
+
+    address:
+      '1, Avenue Tombalbaye, Kin Mazière, Gombe, Kinshasa',
+
+    landmark:
+      'Kin Mazière — Avenue Tombalbaye',
+
+    phone: '',
+
+    coverage: 'Gombe',
+
+    hours:
+      'Lundi à samedi : 07h00 – 23h00. Dimanche : 08h00 – 21h30.',
+
+    availability:
+      'Disponibilité des produits à confirmer directement en magasin.',
+
+    position: {
+      lat: -4.30603,
+      lng: 15.31290
+    }
+  },
+
+  {
+    id: 'sk-cnss',
+    number: '03',
+
+    commune: 'Gombe',
+    type: 'Supermarché partenaire',
+
+    name: 'Super Marché S&K',
+
+    address:
+      'Avenue Mbuji-Mayi n°1/A, Gombe, Kinshasa',
+
+    landmark:
+      'En face de la CNSS — Avenue Mbuji-Mayi',
+
+    phone: '+243 833 180 825',
+
+    coverage: 'Gombe',
+
+    hours:
+      'Tous les jours : 06h00 – 00h00 (à confirmer).',
+
+    availability:
+      'Disponibilité des produits à confirmer directement en magasin.',
+
+    position: {
+      lat: -4.303424,
+      lng: 15.296028
+    }
+  }
+
+],
+
+
   socials: {
     tiktok: '',
     x: '',

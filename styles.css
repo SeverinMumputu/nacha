@@ -1101,3 +1101,1094 @@ body.cart-open { overflow: hidden; }
 @media (prefers-reduced-motion: reduce) {
   .cart-backdrop, .cart-drawer, .cart-trigger, .product-add-cart { transition: none !important; }
 }
+
+
+/* =====================================================
+   NACHA — CARTE INTERACTIVE ET FICHE FLOTTANTE
+   Nouvelle disposition des points de vente
+   ===================================================== */
+
+/* La carte occupe toute la largeur */
+.nacha-stores-layout {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.nacha-map-canvas-wrap {
+  position: relative;
+  min-height: 620px;
+}
+
+#nachaStoresMap {
+  width: 100%;
+  height: 620px;
+}
+
+/* Fiche flottante intégrée à la carte */
+.nacha-map-popup.nacha-store-panel {
+  position: absolute;
+  z-index: 10;
+  right: auto;
+  left: 18px;
+  bottom: 18px;
+  top: auto;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  width: min(390px, calc(100% - 36px));
+  max-height: calc(100% - 36px);
+  min-height: 0;
+
+  padding: 28px 25px 18px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+
+  transform: translate3d(0, 20px, 0) scale(.98);
+  transform-origin: bottom left;
+
+  transition:
+    opacity .35s ease,
+    transform .4s cubic-bezier(.22, 1, .36, 1),
+    visibility .35s ease;
+}
+
+/* État ouvert */
+.nacha-map-popup.nacha-store-panel.is-open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translate3d(0, 0, 0) scale(1);
+}
+
+/* État fermé */
+.nacha-map-popup.nacha-store-panel[hidden] {
+  display: none !important;
+}
+
+/* Transition entre deux enseignes */
+.nacha-map-popup.is-switching .nacha-store-detail {
+  opacity: 0;
+  transform: translateY(9px);
+}
+
+.nacha-store-detail {
+  transition:
+    opacity .2s ease,
+    transform .2s ease;
+}
+
+/* Bouton de fermeture */
+.nacha-store-close {
+  position: absolute;
+  top: 13px;
+  right: 13px;
+  z-index: 3;
+
+  display: grid;
+  place-items: center;
+
+  width: 34px;
+  height: 34px;
+
+  border: 1px solid rgba(241,182,79,.45);
+  border-radius: 50%;
+
+  background: rgba(255,248,240,.08);
+  color: var(--ivory);
+
+  font-size: 23px;
+  line-height: 1;
+
+  cursor: pointer;
+
+  transition:
+    background .25s ease,
+    color .25s ease,
+    transform .25s ease;
+}
+
+.nacha-store-close:hover {
+  background: var(--amber);
+  color: var(--wine-dark);
+  transform: rotate(90deg);
+}
+
+/* Ajustements de la fiche */
+.nacha-map-popup .nacha-store-kicker {
+  margin-bottom: 20px;
+  padding-right: 30px;
+}
+
+.nacha-map-popup .nacha-store-initial {
+  width: 53px;
+  height: 53px;
+  margin-bottom: 17px;
+  font-size: 28px;
+}
+
+.nacha-map-popup .nacha-store-detail h3 {
+  font-size: clamp(25px, 2.5vw, 32px);
+}
+
+.nacha-map-popup .nacha-store-infos {
+  gap: 13px;
+  margin-top: 20px;
+  padding-top: 17px;
+}
+
+.nacha-map-popup .nacha-store-info {
+  grid-template-columns: 75px minmax(0, 1fr);
+  gap: 9px;
+}
+
+.nacha-map-popup .nacha-store-directions {
+  min-height: 45px;
+  margin-top: 19px;
+}
+
+.nacha-map-popup .nacha-store-note {
+  margin-top: 14px;
+}
+
+.nacha-map-popup .nacha-store-panel-bottom {
+  margin-top: 22px;
+  padding-top: 13px;
+}
+
+/* Adaptation tablette */
+@media (max-width: 1000px) {
+  .nacha-map-canvas-wrap,
+  #nachaStoresMap {
+    height: 560px;
+    min-height: 560px;
+  }
+}
+
+/* Adaptation mobile */
+@media (max-width: 650px) {
+  .nacha-map-canvas-wrap,
+  #nachaStoresMap {
+    height: 480px;
+    min-height: 480px;
+  }
+
+  .nacha-map-popup.nacha-store-panel {
+    left: 10px;
+    bottom: 10px;
+
+    width: calc(100% - 20px);
+    max-height: 70%;
+
+    padding: 22px 19px 15px;
+  }
+
+  .nacha-map-popup .nacha-store-kicker {
+    margin-bottom: 15px;
+  }
+
+  .nacha-map-popup .nacha-store-initial {
+    width: 43px;
+    height: 43px;
+    margin-bottom: 13px;
+    font-size: 24px;
+  }
+
+  .nacha-map-popup .nacha-store-detail h3 {
+    font-size: 25px;
+  }
+
+  .nacha-map-popup .nacha-store-infos {
+    gap: 11px;
+    margin-top: 16px;
+  }
+
+  .nacha-map-popup .nacha-store-info {
+    grid-template-columns: 70px minmax(0, 1fr);
+  }
+}
+
+/* Respect des préférences de mouvement */
+@media (prefers-reduced-motion: reduce) {
+  .nacha-map-popup.nacha-store-panel,
+  .nacha-store-detail,
+  .nacha-store-close {
+    transition: none !important;
+  }
+
+  .nacha-map-popup.nacha-store-panel {
+    transform: none;
+  }
+}
+
+/* =====================================================
+   NACHA — ADVANCED GOOGLE MAP MARKERS
+   ===================================================== */
+
+.nacha-map-marker {
+  position: relative;
+
+  display: grid;
+  place-items: center;
+
+  width: 46px;
+  height: 54px;
+
+  padding: 0;
+  border: 0;
+
+  background: transparent;
+
+  cursor: pointer;
+
+  overflow: visible;
+}
+
+.nacha-map-marker::before {
+  content: '';
+
+  position: absolute;
+
+  top: 4px;
+  left: 7px;
+
+  width: 32px;
+  height: 32px;
+
+  border: 2px solid #D28402;
+  border-radius: 50% 50% 50% 0;
+
+  background: #610209;
+
+  box-shadow:
+    0 5px 15px rgba(48, 0, 5, .28);
+
+  transform: rotate(-45deg);
+
+  transition:
+    background .3s ease,
+    border-color .3s ease,
+    transform .3s ease,
+    box-shadow .3s ease;
+}
+
+.nacha-map-marker-number {
+  position: absolute;
+
+  top: 7px;
+  left: 7px;
+
+  display: grid;
+  place-items: center;
+
+  width: 32px;
+  height: 32px;
+
+  color: #FFF8F0;
+
+  font-size: 10px;
+  font-weight: 800;
+
+  z-index: 1;
+
+  transition: color .3s ease;
+}
+
+.nacha-map-marker:hover::before {
+  transform: rotate(-45deg) scale(1.12);
+
+  box-shadow:
+    0 7px 19px rgba(48, 0, 5, .35);
+}
+
+.nacha-map-marker.is-active::before {
+  background: #D28402;
+
+  border-color: #610209;
+
+  transform: rotate(-45deg) scale(1.15);
+
+  box-shadow:
+    0 0 0 6px rgba(210, 132, 2, .18),
+    0 7px 19px rgba(48, 0, 5, .3);
+}
+
+.nacha-map-marker.is-active .nacha-map-marker-number {
+  color: #300005;
+}
+
+.nacha-map-marker:focus-visible {
+  outline: 2px solid #610209;
+  outline-offset: 5px;
+  border-radius: 50%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nacha-map-marker::before,
+  .nacha-map-marker-number {
+    transition: none !important;
+  }
+}
+
+.nacha-store-initial {
+  overflow: hidden;
+  padding: 7px;
+}
+
+.nacha-store-initial img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+
+/* =====================================================
+   NACHA — GRILLE E-COMMERCE
+   Présentation commerciale de la gamme
+   ===================================================== */
+
+.nacha-product-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 18px;
+  width: 100%;
+}
+
+/* Carte produit */
+.nacha-product-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+
+  border: 1px solid rgba(97, 2, 9, .13);
+  background: #FFFCF8;
+
+  box-shadow: 0 12px 35px rgba(48, 0, 5, .035);
+
+  transition:
+    transform .4s var(--ease-out),
+    box-shadow .4s ease,
+    border-color .4s ease;
+}
+
+.nacha-product-card:hover {
+  transform: translateY(-7px);
+  border-color: rgba(210, 132, 2, .5);
+  box-shadow: 0 22px 48px rgba(48, 0, 5, .09);
+}
+
+/* Zone photographique */
+.nacha-product-card-media {
+  position: relative;
+  min-width: 0;
+  height: 315px;
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      ellipse at 50% 45%,
+      #fff 0%,
+      #f7eee5 68%,
+      #efe3d7 100%
+    );
+}
+
+.nacha-product-card-index,
+.nacha-product-card-format {
+  position: absolute;
+  z-index: 4;
+  top: 17px;
+
+  color: #80685e;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+
+.nacha-product-card-index {
+  left: 17px;
+}
+
+.nacha-product-card-format {
+  right: 17px;
+  color: var(--wine);
+}
+
+/* Galerie */
+.nacha-product-gallery {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+}
+
+.nacha-product-gallery--card {
+  min-height: 315px;
+}
+
+.nacha-product-gallery-main {
+  display: grid;
+  place-items: center;
+
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  min-height: 270px;
+
+  padding: 32px 25px 42px;
+
+  border: 0;
+  background: transparent;
+
+  cursor: zoom-in;
+}
+
+.nacha-product-gallery-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 200px;
+
+  object-fit: contain;
+  object-position: center;
+
+  transition: transform .55s var(--ease-out);
+}
+
+.nacha-product-card:hover .nacha-product-gallery-image {
+  transform: scale(1.045);
+}
+
+.nacha-product-gallery-main:focus-visible {
+  outline-offset: -5px;
+}
+
+/* Navigation des images */
+.nacha-product-gallery-controls {
+  position: absolute;
+  z-index: 5;
+  left: 50%;
+  bottom: 12px;
+
+  display: flex;
+  align-items: center;
+  gap: 11px;
+
+  transform: translateX(-50%);
+}
+
+.nacha-product-gallery-arrow {
+  display: grid;
+  place-items: center;
+
+  width: 27px;
+  height: 27px;
+  padding: 0;
+
+  border: 1px solid rgba(97, 2, 9, .2);
+  border-radius: 50%;
+
+  background: rgba(255, 252, 248, .92);
+  color: var(--wine);
+
+  font-size: 13px;
+  cursor: pointer;
+
+  transition:
+    background .25s ease,
+    color .25s ease,
+    border-color .25s ease;
+}
+
+.nacha-product-gallery-arrow:hover {
+  background: var(--wine);
+  border-color: var(--wine);
+  color: var(--ivory);
+}
+
+.nacha-product-gallery-pagination {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.nacha-product-gallery-dot {
+  width: 7px;
+  height: 7px;
+  padding: 0;
+
+  border: 0;
+  border-radius: 20px;
+
+  background: rgba(97, 2, 9, .24);
+  cursor: pointer;
+
+  transition:
+    width .3s ease,
+    background .3s ease;
+}
+
+.nacha-product-gallery-dot.is-active {
+  width: 20px;
+  background: var(--wine);
+}
+
+.nacha-product-gallery-dot:focus-visible {
+  outline-offset: 3px;
+}
+
+.nacha-product-gallery-counter {
+  color: #80685e;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: .08em;
+}
+
+.nacha-product-gallery-placeholder {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  min-height: 270px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+/* Partie commerciale */
+.nacha-product-card-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+
+  padding: 22px 19px 19px;
+}
+
+.nacha-product-card-kicker {
+  margin-bottom: 9px;
+
+  color: #9a786b;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+}
+
+.nacha-product-card-title {
+  margin: 0 0 12px;
+
+  color: var(--wine-dark);
+
+  font: 500 clamp(21px, 1.8vw, 27px)/1.12 var(--display);
+  letter-spacing: -.025em;
+}
+
+.nacha-product-card-description {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+
+  min-height: 82px;
+  margin: 0;
+
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.8;
+}
+
+/* Prix */
+.nacha-product-prices {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 12px;
+
+  width: 100%;
+  margin-top: 19px;
+  padding: 15px 0;
+
+  border-top: 1px solid rgba(97, 2, 9, .12);
+}
+
+.nacha-product-promo {
+  flex-basis: 100%;
+  width: fit-content;
+
+  color: #a46a10;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: .13em;
+}
+
+.nacha-product-old-price {
+  color:black;
+  font-size: 13px;
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+}
+
+.nacha-product-current-price {
+  color: var(--wine);
+  font: 600 24px/1.15 var(--display);
+  letter-spacing: -.025em;
+}
+
+/* Informations complémentaires */
+.nacha-product-card-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 18px;
+}
+
+.nacha-product-card-facts span {
+  padding: 6px 8px;
+
+  border: 1px solid rgba(97, 2, 9, .13);
+  border-radius: 2px;
+
+  color: #80685e;
+  font-size: 8px;
+}
+
+/* Bouton ajouter au panier */
+.nacha-product-add-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  width: 100%;
+  min-height: 47px;
+  margin-top: auto;
+  padding: 0 14px;
+
+  border: 1px solid var(--wine);
+  background: var(--wine);
+  color: var(--ivory);
+
+  font-size: 10px;
+  font-weight: 700;
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    background .3s ease,
+    color .3s ease,
+    border-color .3s ease;
+}
+
+.nacha-product-add-button span:last-child {
+  color: var(--amber-light);
+  font-size: 16px;
+  transition: transform .3s ease;
+}
+
+.nacha-product-add-button:hover {
+  border-color: var(--amber);
+  background: var(--amber);
+  color: var(--wine-dark);
+}
+
+.nacha-product-add-button:hover span:last-child {
+  color: var(--wine-dark);
+  transform: translate(3px, -3px);
+}
+
+
+/* =====================================================
+   NACHA — FICHE IMMERSIVE DU PRODUIT
+   ===================================================== */
+
+.nacha-product-modal {
+  width: min(1100px, calc(100% - 36px));
+  max-width: none;
+
+  max-height: calc(100dvh - 40px);
+
+  margin: auto;
+  padding: 0;
+
+  overflow: visible;
+
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+}
+
+.nacha-product-modal::backdrop {
+  background: rgba(24, 0, 3, .78);
+  backdrop-filter: blur(7px);
+}
+
+.nacha-product-modal-panel {
+  position: relative;
+
+  max-height: calc(100dvh - 40px);
+  padding: 42px;
+
+  overflow-y: auto;
+  overscroll-behavior: contain;
+
+  border: 1px solid rgba(210, 132, 2, .25);
+
+  background: #FFFCF8;
+
+  box-shadow: 0 30px 100px rgba(0, 0, 0, .3);
+
+  animation: nachaProductModalIn .4s var(--ease-out) both;
+}
+
+@keyframes nachaProductModalIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Fermeture */
+.nacha-product-modal-close {
+  position: absolute;
+  z-index: 10;
+  top: 17px;
+  right: 18px;
+
+  display: grid;
+  place-items: center;
+
+  width: 39px;
+  height: 39px;
+
+  border: 1px solid rgba(97, 2, 9, .18);
+  border-radius: 50%;
+
+  background: #FFFCF8;
+  color: var(--wine);
+
+  font-size: 27px;
+  line-height: 1;
+
+  cursor: pointer;
+
+  transition:
+    transform .3s ease,
+    background .3s ease,
+    color .3s ease;
+}
+
+.nacha-product-modal-close:hover {
+  transform: rotate(90deg);
+  background: var(--wine);
+  color: var(--ivory);
+}
+
+/* Organisation de la fiche */
+.nacha-product-modal-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr);
+  align-items: start;
+  gap: 42px;
+}
+
+/* Galerie agrandie */
+.nacha-product-modal-gallery {
+  position: relative;
+  min-width: 0;
+  min-height: 550px;
+
+  background:
+    radial-gradient(
+      ellipse at 50% 45%,
+      #fff 0%,
+      #f6eee5 67%,
+      #ecded1 100%
+    );
+}
+
+.nacha-product-gallery--detail {
+  min-height: 550px;
+}
+
+.nacha-product-gallery--detail .nacha-product-gallery-main {
+  min-height: 480px;
+  padding: 45px 35px 65px;
+}
+
+.nacha-product-gallery--detail .nacha-product-gallery-image {
+  max-height: 460px;
+}
+
+.nacha-product-gallery--detail .nacha-product-gallery-controls {
+  bottom: 18px;
+  gap: 16px;
+}
+
+.nacha-product-gallery--detail .nacha-product-gallery-arrow {
+  width: 34px;
+  height: 34px;
+}
+
+.nacha-product-gallery--detail .nacha-product-gallery-dot {
+  width: 9px;
+  height: 9px;
+}
+
+.nacha-product-gallery--detail .nacha-product-gallery-dot.is-active {
+  width: 25px;
+}
+
+/* Contenu */
+.nacha-product-modal-copy {
+  min-width: 0;
+  padding: 18px 0 5px;
+}
+
+.nacha-product-kicker {
+  display: block;
+  margin-bottom: 16px;
+
+  color: #9a786b;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .17em;
+  text-transform: uppercase;
+}
+
+.nacha-product-modal-copy h2 {
+  margin: 0 0 19px;
+
+  color: var(--wine-dark);
+
+  font: 500 clamp(36px, 4vw, 54px)/1.05 var(--display);
+  letter-spacing: -.045em;
+}
+
+.nacha-product-modal-description {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.9;
+}
+
+/* Prix détaillé */
+.nacha-product-prices--detail {
+  margin-top: 22px;
+  padding: 20px 0;
+}
+
+.nacha-product-prices--detail .nacha-product-current-price {
+  font-size: 31px;
+}
+
+.nacha-product-prices--detail .nacha-product-old-price {
+  font-size: 13px;
+}
+
+/* Fiche technique */
+.nacha-product-detail-specs {
+  display: grid;
+  gap: 0;
+  margin-top: 8px;
+  border-top: 1px solid rgba(97, 2, 9, .13);
+}
+
+.nacha-product-spec {
+  padding: 17px 0;
+  border-bottom: 1px solid rgba(97, 2, 9, .13);
+}
+
+.nacha-product-spec span {
+  display: block;
+  margin-bottom: 8px;
+
+  color: #000000;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .15em;
+}
+
+.nacha-product-spec p {
+  margin: 0;
+
+  color: #584744;
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+/* Caractéristiques */
+.nacha-product-detail-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin: 17px 0;
+}
+
+.nacha-product-detail-facts span {
+  padding: 8px 10px;
+
+  border: 1px solid rgba(97, 2, 9, .15);
+
+  color: #80685e;
+  font-size: 9px;
+}
+
+/* Bouton dans la fiche */
+.nacha-product-modal-copy .nacha-product-add-button {
+  min-height: 54px;
+  margin-top: 22px;
+  padding-inline: 18px;
+}
+
+
+/* =====================================================
+   RESPONSIVE — TABLETTE
+   ===================================================== */
+
+@media (max-width: 1100px) {
+
+  .nacha-product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+  }
+
+  .nacha-product-card-media {
+    height: 350px;
+  }
+
+  .nacha-product-gallery--card {
+    min-height: 350px;
+  }
+
+  .nacha-product-modal-layout {
+    gap: 28px;
+  }
+
+  .nacha-product-modal-panel {
+    padding: 32px;
+  }
+
+  .nacha-product-modal-gallery,
+  .nacha-product-gallery--detail {
+    min-height: 480px;
+  }
+
+  .nacha-product-gallery--detail .nacha-product-gallery-main {
+    min-height: 410px;
+  }
+
+}
+
+
+/* =====================================================
+   RESPONSIVE — MOBILE
+   ===================================================== */
+
+@media (max-width: 650px) {
+
+  .nacha-product-grid {
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+
+  .nacha-product-card-media {
+    height: 350px;
+  }
+
+  .nacha-product-gallery--card {
+    min-height: 350px;
+  }
+
+  .nacha-product-card-body {
+    padding: 23px 20px 20px;
+  }
+
+  .nacha-product-card-title {
+    font-size: 27px;
+  }
+
+  .nacha-product-card-description {
+    min-height: 0;
+    font-size: 12px;
+  }
+
+  /* Fenêtre immersive */
+  .nacha-product-modal {
+    width: calc(100% - 20px);
+    max-height: calc(100dvh - 20px);
+  }
+
+  .nacha-product-modal-panel {
+    max-height: calc(100dvh - 20px);
+    padding: 55px 19px 22px;
+  }
+
+  .nacha-product-modal-layout {
+    grid-template-columns: 1fr;
+    gap: 25px;
+  }
+
+  .nacha-product-modal-gallery,
+  .nacha-product-gallery--detail {
+    min-height: 350px;
+  }
+
+  .nacha-product-gallery--detail .nacha-product-gallery-main {
+    min-height: 330px;
+    padding: 35px 20px 60px;
+  }
+
+  .nacha-product-gallery--detail .nacha-product-gallery-image {
+    max-height: 300px;
+  }
+
+  .nacha-product-modal-copy {
+    padding: 0;
+  }
+
+  .nacha-product-modal-copy h2 {
+    font-size: 39px;
+  }
+
+  .nacha-product-prices--detail .nacha-product-current-price {
+    font-size: 28px;
+  }
+
+}
+
+
+/* =====================================================
+   ACCESSIBILITÉ — MOUVEMENTS RÉDUITS
+   ===================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .nacha-product-card,
+  .nacha-product-gallery-image,
+  .nacha-product-add-button,
+  .nacha-product-gallery-arrow,
+  .nacha-product-modal-panel {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .nacha-product-card:hover {
+    transform: none;
+  }
+
+}

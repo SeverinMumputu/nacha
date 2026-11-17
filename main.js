@@ -702,23 +702,40 @@
 
   });
 
+
 // =====================================================
-// NACHA — GALERIE PHOTOGRAPHIQUE DES PRODUITS
+// NACHA — GAMME E-COMMERCE
+// Grille produits + galeries + fiche immersive
 // =====================================================
 
-const productOptions = $$('.product-option');
-const productStage = $('#productStage');
-const productVisual = $('#productVisual');
+const nachaProducts = Array.isArray(config.products)
+  ? config.products
+  : [];
 
-const productNumber = $('#productNumber');
-const productWeight = $('#productWeight');
-const productTitle = $('#productTitle');
-const productKicker = $('#productKicker');
-const productDescription = $('#productDescription');
-const productFacts = $('#productFacts');
-const productPrice = $('#productPrice');
+const productGrid = $('#productGrid');
 
-const productAddToCartButton = $('#productAddToCart');
+const productDetailModal = $('#productDetailModal');
+const productDetailClose = $('#productDetailClose');
+
+const productDetailGallery = $('#productDetailGallery');
+const productDetailKicker = $('#productDetailKicker');
+const productDetailTitle = $('#productDetailTitle');
+const productDetailDescription = $('#productDetailDescription');
+const productDetailPrices = $('#productDetailPrices');
+const productDetailFormat = $('#productDetailFormat');
+const productDetailUsage = $('#productDetailUsage');
+const productDetailComposition = $('#productDetailComposition');
+const productDetailFacts = $('#productDetailFacts');
+
+const productDetailAddToCart = $('#productDetailAddToCart');
+
+let productDetailReturnFocus = null;
+let productDetailRestoreFocus = true;
+
+
+// =====================================================
+// 1. FORMATAGE DES PRIX
+// =====================================================
 
 const formatPrice = price => {
 
@@ -729,7 +746,9 @@ const formatPrice = price => {
     !Number.isFinite(Number(price)) ||
     Number(price) <= 0
   ) {
+
     return 'Prix à renseigner';
+
   }
 
   return `${new Intl.NumberFormat('fr-FR', {
@@ -738,22 +757,23 @@ const formatPrice = price => {
 
 };
 
+
 const hasValidPrice = product =>
   typeof product?.price === 'number' &&
   Number.isFinite(product.price) &&
   product.price > 0;
 
-let activeProduct = 0;
-
 
 // =====================================================
-// 1. RÉCUPÉRATION DES PHOTOGRAPHIES D'UN PRODUIT
+// 2. RÉCUPÉRATION DES IMAGES
 // =====================================================
 
 const getProductImages = product => {
 
   const images = [];
+
   const registeredSources = new Set();
+
 
   const addImage = (entry, fallbackAlt) => {
 
@@ -761,19 +781,25 @@ const getProductImages = product => {
       ? entry
       : entry?.src;
 
+
     if (
       typeof source !== 'string' ||
       !source.trim() ||
       registeredSources.has(source.trim())
     ) {
+
       return;
+
     }
+
 
     const normalizedSource = source.trim();
 
-    const alt = typeof entry === 'object' && entry?.alt
-      ? String(entry.alt)
-      : fallbackAlt;
+    const alt =
+      typeof entry === 'object' && entry?.alt
+        ? String(entry.alt)
+        : fallbackAlt;
+
 
     images.push({
       src: normalizedSource,
@@ -785,7 +811,7 @@ const getProductImages = product => {
   };
 
 
-  // Toujours conserver l'image principale existante.
+  // Photographie principale.
   if (product.image) {
 
     addImage(
@@ -799,7 +825,7 @@ const getProductImages = product => {
   }
 
 
-  // Ajouter toutes les photographies supplémentaires.
+  // Photographies supplémentaires.
   if (Array.isArray(product.images)) {
 
     product.images.forEach((photo, index) => {
@@ -813,580 +839,694 @@ const getProductImages = product => {
 
   }
 
+
   return images;
 
 };
 
 
 // =====================================================
-// 2. APERÇU AGRANDI DES PHOTOGRAPHIES
+// 3. AFFICHAGE DU PRIX COMMERCIAL
 // =====================================================
 
-let productLightbox = null;
-let productLightboxImage = null;
-let productLightboxCaption = null;
-let productLightboxCounter = null;
+const renderProductPrices = (container, product) => {
 
-let productLightboxPrevious = null;
-let productLightboxNext = null;
-let productLightboxClose = null;
+  if (!container) return;
 
-let productLightboxImages = [];
-let productLightboxIndex = 0;
-let productLightboxReturnFocus = null;
+  container.replaceChildren();
 
 
-const createProductLightbox = () => {
+  const oldPrice = Number(product.oldPrice);
 
-  if (productLightbox) return;
+  const currentPrice = Number(product.price);
 
-  productLightbox = document.createElement('div');
 
-  productLightbox.className = 'product-lightbox';
-  productLightbox.hidden = true;
+  // Ancien prix uniquement si une réduction réelle existe.
+  const hasPromotion =
+    Number.isFinite(oldPrice) &&
+    Number.isFinite(currentPrice) &&
+    oldPrice > currentPrice;
 
-  productLightbox.setAttribute('aria-hidden', 'true');
 
-  productLightbox.innerHTML = `
-    <div class="product-lightbox-backdrop"></div>
+  if (hasPromotion) {
 
-    <div
-      class="product-lightbox-dialog"
-      role="dialog"
-      aria-modal="true"
-      aria-label="Aperçu des photographies du produit NACHA"
-    >
+    const promotion = document.createElement('span');
 
-      <button
-        type="button"
-        class="product-lightbox-close"
-        aria-label="Fermer l'aperçu"
-      >×</button>
+    promotion.className = 'nacha-product-promo';
 
-      <button
-        type="button"
-        class="product-lightbox-nav product-lightbox-prev"
-        aria-label="Photographie précédente"
-      >←</button>
+    promotion.textContent = 'OFFRE NACHA';
 
-      <figure class="product-lightbox-figure">
+    container.appendChild(promotion);
 
-        <img
-          class="product-lightbox-image"
-          alt=""
-          draggable="false"
-        >
 
-        <figcaption class="product-lightbox-caption"></figcaption>
+    const oldPriceElement = document.createElement('del');
 
-      </figure>
+    oldPriceElement.className = 'nacha-product-old-price';
 
-      <button
-        type="button"
-        class="product-lightbox-nav product-lightbox-next"
-        aria-label="Photographie suivante"
-      >→</button>
+    oldPriceElement.textContent = formatPrice(oldPrice);
 
-      <div
-        class="product-lightbox-counter"
-        aria-live="polite"
-      ></div>
-
-    </div>
-  `;
-
-  document.body.appendChild(productLightbox);
-
-
-  // Récupération des éléments.
-  productLightboxImage = $('.product-lightbox-image', productLightbox);
-
-  productLightboxCaption = $('.product-lightbox-caption', productLightbox);
-
-  productLightboxCounter = $('.product-lightbox-counter', productLightbox);
-
-  productLightboxPrevious = $('.product-lightbox-prev', productLightbox);
-
-  productLightboxNext = $('.product-lightbox-next', productLightbox);
-
-  productLightboxClose = $('.product-lightbox-close', productLightbox);
-
-
-  // Fermeture par clic sur le fond.
-  $('.product-lightbox-backdrop', productLightbox)
-    .addEventListener('click', closeProductLightbox);
-
-
-  productLightboxClose.addEventListener(
-    'click',
-    closeProductLightbox
-  );
-
-
-  // Navigation dans l'aperçu.
-  productLightboxPrevious.addEventListener('click', () => {
-
-    changeProductLightboxImage(productLightboxIndex - 1);
-
-  });
-
-
-  productLightboxNext.addEventListener('click', () => {
-
-    changeProductLightboxImage(productLightboxIndex + 1);
-
-  });
-
-
-};
-
-
-// Mise à jour de la photographie agrandie.
-const updateProductLightbox = () => {
-
-  if (!productLightboxImages.length) return;
-
-  const photo = productLightboxImages[productLightboxIndex];
-
-  productLightboxImage.src = photo.src;
-  productLightboxImage.alt = photo.alt || 'Produit NACHA';
-
-  productLightboxCaption.textContent =
-    photo.alt || 'Photographie du produit NACHA';
-
-  productLightboxCounter.textContent =
-    `${String(productLightboxIndex + 1).padStart(2, '0')} / ${String(productLightboxImages.length).padStart(2, '0')}`;
-
-};
-
-
-// Changer de photographie dans l'aperçu.
-const changeProductLightboxImage = index => {
-
-  if (!productLightboxImages.length) return;
-
-  productLightboxIndex =
-    (index + productLightboxImages.length) %
-    productLightboxImages.length;
-
-  updateProductLightbox();
-
-};
-
-
-// Ouvrir l'aperçu agrandi.
-const openProductLightbox = (images, index, trigger) => {
-
-  if (!images.length) return;
-
-  createProductLightbox();
-
-  productLightboxImages = images;
-  productLightboxIndex = index;
-
-  productLightboxReturnFocus = trigger;
-
-  updateProductLightbox();
-
-  productLightboxPrevious.hidden = images.length < 2;
-  productLightboxNext.hidden = images.length < 2;
-
-  productLightbox.hidden = false;
-  productLightbox.setAttribute('aria-hidden', 'false');
-
-  document.body.classList.add('product-lightbox-open');
-
-  productLightboxClose.focus({ preventScroll: true });
-
-};
-
-
-// Fermer l'aperçu.
-function closeProductLightbox() {
-
-  if (!productLightbox || productLightbox.hidden) return;
-
-  productLightbox.hidden = true;
-
-  productLightbox.setAttribute('aria-hidden', 'true');
-
-  document.body.classList.remove('product-lightbox-open');
-
-  if (
-    productLightboxReturnFocus &&
-    typeof productLightboxReturnFocus.focus === 'function'
-  ) {
-
-    productLightboxReturnFocus.focus({ preventScroll: true });
+    container.appendChild(oldPriceElement);
 
   }
 
-  productLightboxReturnFocus = null;
 
-  productLightboxImages = [];
+  const currentPriceElement = document.createElement('strong');
+
+  currentPriceElement.className = 'nacha-product-current-price';
+
+  currentPriceElement.textContent = formatPrice(product.price);
+
+  container.appendChild(currentPriceElement);
 
 };
 
 
-// Navigation clavier de l'aperçu.
-document.addEventListener('keydown', event => {
-
-  if (!productLightbox || productLightbox.hidden) return;
-
-  if (event.key === 'Escape') {
-
-    closeProductLightbox();
-
-  } else if (event.key === 'ArrowLeft') {
-
-    event.preventDefault();
-
-    changeProductLightboxImage(productLightboxIndex - 1);
-
-  } else if (event.key === 'ArrowRight') {
-
-    event.preventDefault();
-
-    changeProductLightboxImage(productLightboxIndex + 1);
-
-  }
-
-});
-
-
 // =====================================================
-// 3. CONSTRUCTION DE LA GALERIE D'UN PRODUIT
+// 4. GALERIE ET PAGINATION DES PHOTOGRAPHIES
 // =====================================================
 
-const renderProductGallery = (product, images) => {
+const createProductGallery = (
+  product,
+  options = {}
+) => {
 
-  if (!productVisual || !images.length) return;
-
-  productVisual.replaceChildren();
-
-  productVisual.setAttribute(
-    'aria-label',
-    `Galerie photographique : ${product.title || 'Produit NACHA'}`
-  );
+  const {
+    variant = 'card',
+    onOpen = null
+  } = options;
 
 
   const gallery = document.createElement('div');
 
-  gallery.className = 'product-gallery';
+  gallery.className =
+    `nacha-product-gallery nacha-product-gallery--${variant}`;
 
 
-  // Grande zone photographique.
-  const mainView = document.createElement('button');
+  const images = getProductImages(product);
 
-  mainView.type = 'button';
-  mainView.className = 'product-gallery-main';
+
+  // Aucun visuel disponible.
+  if (!images.length) {
+
+    const placeholder = document.createElement('div');
+
+    placeholder.className = 'nacha-product-gallery-placeholder';
+
+    placeholder.textContent = 'Visuel NACHA à intégrer';
+
+    gallery.appendChild(placeholder);
+
+    return gallery;
+
+  }
+
+
+  let activeImage = 0;
+
+
+  // Image principale cliquable.
+  const mainButton = document.createElement('button');
+
+  mainButton.type = 'button';
+
+  mainButton.className = 'nacha-product-gallery-main';
 
 
   const mainImage = document.createElement('img');
 
-  mainImage.className = 'product-gallery-image';
+  mainImage.className = 'nacha-product-gallery-image';
+
   mainImage.src = images[0].src;
+
   mainImage.alt = images[0].alt;
+
+  mainImage.loading = variant === 'card' ? 'lazy' : 'eager';
+
   mainImage.draggable = false;
 
 
-  // Compteur.
-  const counter = document.createElement('span');
-
-  counter.className = 'product-gallery-counter';
-  counter.setAttribute('aria-hidden', 'true');
+  mainButton.appendChild(mainImage);
 
 
-  // Indication d'agrandissement.
-  const zoomHint = document.createElement('span');
+  if (typeof onOpen === 'function') {
 
-  zoomHint.className = 'product-gallery-zoom';
-  zoomHint.setAttribute('aria-hidden', 'true');
-  zoomHint.textContent = 'AGRANDIR ↗';
+    mainButton.addEventListener('click', () => {
 
-
-  mainView.append(
-    mainImage,
-    counter,
-    zoomHint
-  );
-
-
-  // Zone des miniatures.
-  const thumbnails = document.createElement('div');
-
-  thumbnails.className = 'product-gallery-thumbnails';
-
-  thumbnails.setAttribute(
-    'role',
-    'group'
-  );
-
-  thumbnails.setAttribute(
-    'aria-label',
-    `Photographies de ${product.title || 'ce produit'}`
-  );
-
-  // Masquer la rangée lorsqu'un seul visuel existe.
-  thumbnails.hidden = images.length < 2;
-
-
-  let activeGalleryImage = 0;
-
-  const thumbnailButtons = [];
-
-
-  // Sélectionner une photographie.
-  const selectGalleryImage = index => {
-
-    activeGalleryImage =
-      (index + images.length) % images.length;
-
-    const photo = images[activeGalleryImage];
-
-    mainImage.src = photo.src;
-    mainImage.alt = photo.alt;
-
-    counter.textContent =
-      `${String(activeGalleryImage + 1).padStart(2, '0')} / ${String(images.length).padStart(2, '0')}`;
-
-    mainView.setAttribute(
-      'aria-label',
-      `Agrandir la photographie ${activeGalleryImage + 1} sur ${images.length} de ${product.title || 'ce produit'}`
-    );
-
-    thumbnailButtons.forEach((button, buttonIndex) => {
-
-      const selected = buttonIndex === activeGalleryImage;
-
-      button.classList.toggle('is-active', selected);
-
-      button.setAttribute(
-        'aria-pressed',
-        String(selected)
-      );
+      onOpen(mainButton);
 
     });
 
-  };
-
-
-  // Générer les miniatures.
-  images.forEach((photo, index) => {
-
-    const thumbnail = document.createElement('button');
-
-    thumbnail.type = 'button';
-
-    thumbnail.className =
-      `product-gallery-thumb${index === 0 ? ' is-active' : ''}`;
-
-    thumbnail.setAttribute(
+    mainButton.setAttribute(
       'aria-label',
-      `Afficher la photographie ${index + 1} de ${images.length} : ${photo.alt || product.title}`
+      `Voir les détails de ${product.title}`
     );
 
-    thumbnail.setAttribute(
-      'aria-pressed',
-      String(index === 0)
+  } else {
+
+    mainButton.setAttribute(
+      'aria-label',
+      `Photographie de ${product.title}`
+    );
+
+  }
+
+
+  gallery.appendChild(mainButton);
+
+
+  // Les contrôles ne sont créés qu'en présence de plusieurs images.
+  if (images.length > 1) {
+
+    const controls = document.createElement('div');
+
+    controls.className = 'nacha-product-gallery-controls';
+
+
+    const previous = document.createElement('button');
+
+    previous.type = 'button';
+
+    previous.className =
+      'nacha-product-gallery-arrow nacha-product-gallery-arrow--previous';
+
+    previous.textContent = '←';
+
+    previous.setAttribute(
+      'aria-label',
+      'Photographie précédente'
     );
 
 
-    const thumbnailImage = document.createElement('img');
+    const pagination = document.createElement('div');
 
-    thumbnailImage.src = photo.src;
-    thumbnailImage.alt = '';
-    thumbnailImage.loading = 'lazy';
-    thumbnailImage.draggable = false;
+    pagination.className = 'nacha-product-gallery-pagination';
+
+    pagination.setAttribute(
+      'role',
+      'group'
+    );
+
+    pagination.setAttribute(
+      'aria-label',
+      `Photographies de ${product.title}`
+    );
 
 
-    thumbnail.appendChild(thumbnailImage);
+    const counter = document.createElement('span');
 
-    thumbnail.addEventListener('click', () => {
+    counter.className = 'nacha-product-gallery-counter';
 
-      selectGalleryImage(index);
 
-      // Garder la miniature active dans la zone visible.
-      thumbnail.scrollIntoView({
-        behavior: prefersReducedMotion.matches ? 'auto' : 'smooth',
-        block: 'nearest',
-        inline: 'nearest'
+    const next = document.createElement('button');
+
+    next.type = 'button';
+
+    next.className =
+      'nacha-product-gallery-arrow nacha-product-gallery-arrow--next';
+
+    next.textContent = '→';
+
+    next.setAttribute(
+      'aria-label',
+      'Photographie suivante'
+    );
+
+
+    const dots = [];
+
+
+    // Mise à jour de la photographie active.
+    const showImage = index => {
+
+      activeImage =
+        (index + images.length) % images.length;
+
+
+      const photo = images[activeImage];
+
+      mainImage.src = photo.src;
+
+      mainImage.alt = photo.alt;
+
+
+      counter.textContent =
+        `${String(activeImage + 1).padStart(2, '0')} / ${String(images.length).padStart(2, '0')}`;
+
+
+      dots.forEach((dot, dotIndex) => {
+
+        const selected = dotIndex === activeImage;
+
+        dot.classList.toggle('is-active', selected);
+
+        dot.setAttribute(
+          'aria-pressed',
+          String(selected)
+        );
+
+      });
+
+    };
+
+
+    // Création des boutons de pagination.
+    images.forEach((photo, index) => {
+
+      const dot = document.createElement('button');
+
+      dot.type = 'button';
+
+      dot.className = 'nacha-product-gallery-dot';
+
+      dot.setAttribute(
+        'aria-label',
+        `Afficher la photographie ${index + 1}`
+      );
+
+      dot.setAttribute(
+        'aria-pressed',
+        String(index === 0)
+      );
+
+
+      dot.addEventListener('click', () => {
+
+        showImage(index);
+
+      });
+
+
+      pagination.appendChild(dot);
+
+      dots.push(dot);
+
+    });
+
+
+    previous.addEventListener('click', () => {
+
+      showImage(activeImage - 1);
+
+    });
+
+
+    next.addEventListener('click', () => {
+
+      showImage(activeImage + 1);
+
+    });
+
+
+    controls.append(
+      previous,
+      pagination,
+      counter,
+      next
+    );
+
+
+    gallery.appendChild(controls);
+
+
+    // Initialiser le compteur.
+    showImage(0);
+
+  }
+
+
+  return gallery;
+
+};
+
+
+// =====================================================
+// 5. OUVERTURE DE LA FICHE IMMERSIVE
+// =====================================================
+
+const openProductDetails = (
+  product,
+  index,
+  trigger
+) => {
+
+  if (!productDetailModal) return;
+
+
+  productDetailReturnFocus = trigger;
+
+  productDetailRestoreFocus = true;
+
+
+  // Informations principales.
+  productDetailKicker.textContent =
+    product.kicker || 'GAMME NACHA';
+
+
+  productDetailTitle.textContent =
+    product.title || 'Produit NACHA';
+
+
+  productDetailDescription.textContent =
+    product.description || 'Description à renseigner.';
+
+
+  // Prix.
+  renderProductPrices(
+    productDetailPrices,
+    product
+  );
+
+
+  // Format.
+  productDetailFormat.textContent =
+    product.weight || 'Format à renseigner.';
+
+
+  // Conseils d'utilisation.
+  productDetailUsage.textContent =
+    product.usage?.trim() ||
+    'Informations à compléter par NACHA.';
+
+
+  // Composition.
+  productDetailComposition.textContent =
+    product.composition?.trim() ||
+    'Informations à compléter par NACHA.';
+
+
+  // Caractéristiques complémentaires.
+  productDetailFacts.replaceChildren();
+
+
+  if (Array.isArray(product.facts)) {
+
+    product.facts.forEach(fact => {
+
+      const item = document.createElement('span');
+
+      item.textContent = fact;
+
+      productDetailFacts.appendChild(item);
+
+    });
+
+  }
+
+
+  // Galerie détaillée avec sa propre pagination.
+  productDetailGallery.replaceChildren();
+
+  productDetailGallery.appendChild(
+    createProductGallery(product, {
+      variant: 'detail'
+    })
+  );
+
+
+  // Préparer le bouton d'ajout au panier.
+  productDetailAddToCart.dataset.productIndex =
+    String(index);
+
+  productDetailAddToCart.dataset.productId =
+    String(product.id || index);
+
+
+  // Ouvrir la fenêtre.
+  if (!productDetailModal.open) {
+
+    productDetailModal.showModal();
+
+  }
+
+};
+
+
+// =====================================================
+// 6. FERMETURE DE LA FICHE IMMERSIVE
+// =====================================================
+
+const closeProductDetails = (restoreFocus = true) => {
+
+  if (!productDetailModal?.open) return;
+
+  productDetailRestoreFocus = restoreFocus;
+
+  productDetailModal.close();
+
+};
+
+
+productDetailClose?.addEventListener('click', () => {
+
+  closeProductDetails();
+
+});
+
+
+// Fermeture avec Échap.
+productDetailModal?.addEventListener('cancel', event => {
+
+  event.preventDefault();
+
+  closeProductDetails();
+
+});
+
+
+// Clic sur le fond de la fenêtre.
+productDetailModal?.addEventListener('click', event => {
+
+  if (event.target === productDetailModal) {
+
+    closeProductDetails();
+
+  }
+
+});
+
+
+// Restaurer le focus après fermeture.
+productDetailModal?.addEventListener('close', () => {
+
+  if (
+    productDetailRestoreFocus &&
+    productDetailReturnFocus?.isConnected
+  ) {
+
+    requestAnimationFrame(() => {
+
+      productDetailReturnFocus.focus({
+        preventScroll: true
       });
 
     });
 
-
-    thumbnails.appendChild(thumbnail);
-
-    thumbnailButtons.push(thumbnail);
-
-  });
-
-
-  // Initialiser le compteur.
-  selectGalleryImage(0);
-
-
-  // Ouvrir l'image en grand.
-  mainView.addEventListener('click', () => {
-
-    openProductLightbox(
-      images,
-      activeGalleryImage,
-      mainView
-    );
-
-  });
-
-
-  gallery.append(
-    mainView,
-    thumbnails
-  );
-
-
-  productVisual.appendChild(gallery);
-
-
-  // Conserver le bouton d'ajout au panier existant.
-  if (productAddToCartButton) {
-
-    productAddToCartButton.setAttribute(
-      'aria-label',
-      `Ajouter ${product.title || 'ce produit'} au panier`
-    );
-
-    productVisual.appendChild(productAddToCartButton);
-
   }
 
-};
+  productDetailReturnFocus = null;
+
+  productDetailRestoreFocus = true;
+
+});
 
 
 // =====================================================
-// 4. AFFICHAGE DU PRODUIT SÉLECTIONNÉ
+// 7. CONSTRUCTION DES CARTES PRODUITS
 // =====================================================
 
-const renderProduct = index => {
+const createProductCard = (product, index) => {
 
-  const products = config.products || [];
+  const card = document.createElement('article');
 
-  if (!products.length) return;
-
-  activeProduct =
-    (index + products.length) % products.length;
-
-  const item = products[activeProduct];
+  card.className = 'nacha-product-card';
 
 
-  // Couleur de la scène.
-  if (productStage) {
+  // Galerie.
+  const media = document.createElement('div');
 
-    productStage.classList.remove(
-      'product-tone--small',
-      'product-tone--red',
-      'product-tone--green',
-      'product-tone--portable'
-    );
+  media.className = 'nacha-product-card-media';
 
-    productStage.classList.add(
-      item.theme || 'product-tone--small'
-    );
 
-    productStage.classList.remove('product-switching');
+  const indexLabel = document.createElement('span');
 
-    if (!prefersReducedMotion.matches) {
+  indexLabel.className = 'nacha-product-card-index';
 
-      void productStage.offsetWidth;
+  //indexLabel.textContent =
+    //`NACHA / ${String(index + 1).padStart(2, '0')}`;
 
-      productStage.classList.add('product-switching');
+
+  const formatLabel = document.createElement('span');
+
+  formatLabel.className = 'nacha-product-card-format';
+
+  formatLabel.textContent = product.weight || 'Format NACHA';
+
+
+  const gallery = createProductGallery(product, {
+
+    variant: 'card',
+
+    onOpen: trigger => {
+
+      openProductDetails(
+        product,
+        index,
+        trigger
+      );
 
     }
 
-  }
+  });
 
 
-  // Informations commerciales.
-  if (productNumber) {
-
-    productNumber.textContent =
-      `RÉFÉRENCE ${String(activeProduct + 1).padStart(2, '0')}`;
-
-  }
-
-  if (productWeight) {
-
-    productWeight.textContent =
-      String(item.weight || '').toUpperCase();
-
-  }
-
-  if (productTitle) {
-
-    productTitle.innerHTML =
-      `${escapeHtml(item.title || 'NACHA')} <em>${escapeHtml(item.weight || '')}</em>`;
-
-  }
-
-  if (productKicker) {
-    productKicker.textContent = item.kicker || '';
-  }
-
-  if (productDescription) {
-    productDescription.textContent = item.description || '';
-  }
-
-  if (productPrice) {
-    productPrice.textContent = formatPrice(item.price);
-  }
+  media.append(
+    indexLabel,
+    formatLabel,
+    gallery
+  );
 
 
-  // Informations complémentaires.
-  if (productFacts) {
+  // Partie commerciale.
+  const body = document.createElement('div');
 
-    productFacts.replaceChildren();
+  body.className = 'nacha-product-card-body';
 
-    (item.facts || []).forEach(fact => {
 
-      const span = document.createElement('span');
+  const kicker = document.createElement('span');
 
-      span.textContent = fact;
+  kicker.className = 'nacha-product-card-kicker';
 
-      productFacts.appendChild(span);
+  kicker.textContent =
+    product.kicker || 'GAMME NACHA';
+
+
+  const title = document.createElement('h3');
+
+  title.className = 'nacha-product-card-title';
+
+  title.textContent = product.title || 'Produit NACHA';
+
+
+  const description = document.createElement('p');
+
+  description.className = 'nacha-product-card-description';
+
+  description.textContent =
+    product.description || 'Description à renseigner.';
+
+
+  // Prix commercial.
+  const prices = document.createElement('div');
+
+  prices.className = 'nacha-product-prices';
+
+  renderProductPrices(prices, product);
+
+
+  // Caractéristiques.
+  const facts = document.createElement('div');
+
+  facts.className = 'nacha-product-card-facts';
+
+
+  if (Array.isArray(product.facts)) {
+
+    product.facts.forEach(fact => {
+
+      const item = document.createElement('span');
+
+      item.textContent = fact;
+
+      facts.appendChild(item);
 
     });
 
   }
 
 
-  // Construire la galerie correspondant au produit.
-  if (productVisual) {
+  // Bouton d'achat.
+  const addButton = document.createElement('button');
 
-    const images = getProductImages(item);
+  addButton.type = 'button';
 
-    if (images.length) {
+  addButton.className = 'nacha-product-add-button';
 
-      renderProductGallery(item, images);
+  addButton.dataset.addToCart = 'true';
 
-    } else {
+  addButton.dataset.productId =
+    String(product.id || index);
 
-      showProductPlaceholder();
 
-    }
+  const buttonLabel = document.createElement('span');
+
+  buttonLabel.textContent = 'Ajouter au panier';
+  buttonLabel.style.fontSize = "13px";
+  buttonLabel.style.marginLeft = "70px";
+
+
+  const buttonArrow = document.createElement('span');
+
+  buttonArrow.setAttribute('aria-hidden', 'true');
+
+  //buttonArrow.textContent = '↗';
+
+
+  addButton.append(
+    buttonLabel,
+    buttonArrow
+  );
+
+
+  body.append(
+    kicker,
+    title,
+    description,
+    prices,
+    facts,
+    addButton
+  );
+
+
+  card.append(
+    media,
+    body
+  );
+
+
+  return card;
+
+};
+
+
+// =====================================================
+// 8. AFFICHAGE DE TOUS LES PRODUITS
+// =====================================================
+
+const renderProductGrid = () => {
+
+  if (!productGrid) return;
+
+  productGrid.replaceChildren();
+
+
+  if (!nachaProducts.length) {
+
+    const message = document.createElement('p');
+
+    message.textContent =
+      'Les produits NACHA seront bientôt disponibles.';
+
+    productGrid.appendChild(message);
+
+    return;
 
   }
 
 
-  // Synchroniser les quatre formats.
-  productOptions.forEach((button, buttonIndex) => {
+  nachaProducts.forEach((product, index) => {
 
-    const selected = buttonIndex === activeProduct;
-
-    button.classList.toggle('is-active', selected);
-
-    button.setAttribute(
-      'aria-pressed',
-      String(selected)
+    productGrid.appendChild(
+      createProductCard(product, index)
     );
 
   });
@@ -1394,117 +1534,9 @@ const renderProduct = index => {
 };
 
 
-// =====================================================
-// 5. PLACEHOLDER SI AUCUNE PHOTOGRAPHIE N'EST DISPONIBLE
-// =====================================================
+// Affichage immédiat des quatre produits.
+renderProductGrid();
 
-const showProductPlaceholder = () => {
-
-  if (!productVisual) return;
-
-  productVisual.replaceChildren();
-
-  const orbitA = document.createElement('div');
-
-  orbitA.className = 'visual-orbit visual-orbit--a';
-  orbitA.setAttribute('aria-hidden', 'true');
-
-
-  const orbitB = document.createElement('div');
-
-  orbitB.className = 'visual-orbit visual-orbit--b';
-  orbitB.setAttribute('aria-hidden', 'true');
-
-
-  const pepper = document.createElement('img');
-
-  pepper.className = 'stage-chili';
-  pepper.src = 'assets/illustrations/chili-art.svg';
-  pepper.alt = '';
-  pepper.setAttribute('aria-hidden', 'true');
-
-
-  const placeholder = document.createElement('div');
-
-  placeholder.className =
-    'asset-placeholder asset-placeholder--product';
-
-  placeholder.innerHTML = `
-    <span class="asset-placeholder__icon" aria-hidden="true">✳</span>
-    <strong>Visuel officiel du sachet</strong>
-    <span>À intégrer avant publication</span>
-  `;
-
-
-  productVisual.append(
-    orbitA,
-    orbitB,
-    pepper,
-    placeholder
-  );
-
-
-  if (productAddToCartButton) {
-
-    productVisual.appendChild(productAddToCartButton);
-
-  }
-
-  productVisual.setAttribute(
-    'aria-label',
-    'Emplacement de la photographie officielle du produit'
-  );
-
-};
-
-
-// =====================================================
-// 6. NAVIGATION ENTRE LES FORMATS
-// =====================================================
-
-function escapeHtml(value) {
-
-  return String(value).replace(
-    /[&<>"']/g,
-    char => ({
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      '"': '&quot;',
-      "'": '&#39;'
-    }[char])
-  );
-
-}
-
-
-productOptions.forEach(button => {
-
-  button.addEventListener('click', () => {
-
-    renderProduct(Number(button.dataset.product));
-
-  });
-
-});
-
-
-$('#productPrev')?.addEventListener('click', () => {
-
-  renderProduct(activeProduct - 1);
-
-});
-
-
-$('#productNext')?.addEventListener('click', () => {
-
-  renderProduct(activeProduct + 1);
-
-});
-
-
-// Afficher le premier produit.
-renderProduct(0);
 
   // E-commerce NACHA : panier persistant, quantités, suppression et commande WhatsApp.
   const cartStorageKey = 'nacha-cart-v1';
@@ -1682,24 +1714,90 @@ renderProduct(0);
     }
   };
 
-  const addProductToCart = (product, index) => {
-    if (!product) return;
-    const id = getProductId(product, index);
-    const existing = cart.find(entry => entry.id === id);
-    if (existing) existing.quantity += 1;
-    else cart.push({ id, quantity: 1 });
-    saveCart();
-    renderCart();
-    setCartStatus(`${product.title || 'Produit NACHA'} ajouté au panier.`);
-    openCart(productAddToCartButton || cartTrigger);
-  };
 
-  if (productAddToCartButton) {
-    productAddToCartButton.addEventListener('click', () => {
-      const product = (config.products || [])[activeProduct];
-      addProductToCart(product, activeProduct);
-    });
+const addProductToCart = (
+  product,
+  index,
+  returnFocus = cartTrigger
+) => {
+
+  if (!product) return;
+
+  const id = getProductId(product, index);
+
+  const existing = cart.find(entry => entry.id === id);
+
+  if (existing) {
+    existing.quantity += 1;
+  } else {
+    cart.push({ id, quantity: 1 });
   }
+
+  saveCart();
+
+  renderCart();
+
+  setCartStatus(
+    `${product.title || 'Produit NACHA'} ajouté au panier.`
+  );
+
+  openCart(returnFocus || cartTrigger);
+
+};
+
+
+
+// -----------------------------------------------------
+// AJOUT AU PANIER DEPUIS LES CARTES PRODUITS
+// -----------------------------------------------------
+
+productGrid?.addEventListener('click', event => {
+
+  const button = event.target.closest('[data-add-to-cart]');
+
+  if (!button) return;
+
+  const productIndex = nachaProducts.findIndex(
+    (product, index) =>
+      String(product.id || index) === button.dataset.productId
+  );
+
+  if (productIndex < 0) return;
+
+  addProductToCart(
+    nachaProducts[productIndex],
+    productIndex,
+    button
+  );
+
+});
+
+
+// -----------------------------------------------------
+// AJOUT AU PANIER DEPUIS LA FICHE IMMERSIVE
+// -----------------------------------------------------
+
+productDetailAddToCart?.addEventListener('click', () => {
+
+  const productIndex = Number(
+    productDetailAddToCart.dataset.productIndex
+  );
+
+  const product = nachaProducts[productIndex];
+
+  if (!product) return;
+
+  // Fermer la fiche avant d'ouvrir le panier.
+  closeProductDetails(false);
+
+  addProductToCart(
+    product,
+    productIndex,
+    cartTrigger
+  );
+
+});
+
 
   cartTrigger?.addEventListener('click', () => {
     if (cartDrawer?.classList.contains('is-open')) closeCart();
@@ -1892,4 +1990,713 @@ renderProduct(0);
   if (copyrightYear) copyrightYear.textContent = String(new Date().getFullYear());
   // Les ancres restent natives, mais on ferme aussi le menu lors de changements de hash.
   window.addEventListener('hashchange', closeMenu);
+
+
+
+// =====================================================
+// NACHA — GOOGLE MAPS / POINTS DE VENTE
+// Configuration AdvancedMarkerElement
+// =====================================================
+
+const nachaStores = Array.isArray(config.storeLocations)
+  ? config.storeLocations
+  : [];
+
+const nachaMapElement = $('#nachaStoresMap');
+const nachaMapStatus = $('#nachaMapStatus');
+const nachaMapFallback = $('#nachaMapFallback');
+
+const nachaStorePanel = $('#nachaStorePanel');
+const nachaStoreClose = $('#nachaStoreClose');
+const nachaStoreDetail = $('#nachaStoreDetail');
+
+let nachaGoogleMap = null;
+let activeNachaStore = null;
+
+let nachaPanelTimer = null;
+let nachaPanelRevision = 0;
+
+const nachaMarkers = new Map();
+
+
+// -----------------------------------------------------
+// 1. STATUT DE LA CARTE
+// -----------------------------------------------------
+
+const setNachaMapStatus = message => {
+
+  if (nachaMapStatus) {
+    nachaMapStatus.textContent = message;
+  }
+
+};
+
+
+// -----------------------------------------------------
+// 2. CONSTRUCTION DES INFORMATIONS
+// -----------------------------------------------------
+
+const renderNachaStoreDetails = store => {
+
+  if (!nachaStoreDetail || !store) return;
+
+  nachaStoreDetail.replaceChildren();
+
+  const kicker = document.createElement('span');
+
+  kicker.className = 'nacha-store-kicker';
+
+  kicker.textContent =
+    String(store.type || 'POINT DE VENTE NACHA').toUpperCase();
+
+
+const initial = document.createElement('div');
+
+initial.className = 'nacha-store-initial';
+
+const logo = document.createElement('img');
+
+logo.src = 'logo.webp';
+
+logo.alt = 'Logo NACHA';
+
+initial.appendChild(logo);
+
+
+  const title = document.createElement('h3');
+
+  title.textContent = store.name;
+
+
+  const branch = document.createElement('span');
+
+  branch.className = 'nacha-store-branch';
+
+  branch.textContent = store.commune || 'Kinshasa';
+
+
+  const information = document.createElement('dl');
+
+  information.className = 'nacha-store-infos';
+
+
+  const addInformation = (label, value) => {
+
+    if (!value) return;
+
+    const row = document.createElement('div');
+
+    row.className = 'nacha-store-info';
+
+
+    const term = document.createElement('dt');
+
+    term.textContent = label;
+
+
+    const description = document.createElement('dd');
+
+    description.textContent = value;
+
+
+    row.append(term, description);
+
+    information.appendChild(row);
+
+  };
+
+
+  addInformation('ADRESSE', store.address);
+
+  addInformation('REPÈRE', store.landmark);
+
+  addInformation('HORAIRES', store.hours);
+
+  addInformation('CONTACT', store.phone);
+
+  addInformation('ZONE', store.coverage);
+
+  addInformation('INFORMATION', store.availability);
+
+
+  // Itinéraire basé directement sur les coordonnées GPS.
+  const directions = document.createElement('a');
+
+  directions.className = 'nacha-store-directions';
+
+
+  const directionsUrl = new URL(
+    'https://www.google.com/maps/dir/'
+  );
+
+  directionsUrl.searchParams.set('api', '1');
+
+  directionsUrl.searchParams.set(
+    'destination',
+    `${store.position.lat},${store.position.lng}`
+  );
+
+
+  directions.href = directionsUrl.toString();
+
+  directions.target = '_blank';
+
+  directions.rel = 'noopener noreferrer';
+
+
+  directions.innerHTML =
+    'Obtenir un itinéraire <span aria-hidden="true">↗</span>';
+
+
+  const note = document.createElement('p');
+
+  note.className = 'nacha-store-note';
+
+  note.textContent =
+    'Les informations pratiques sont indicatives. Veuillez confirmer la disponibilité des produits auprès du magasin.';
+
+
+  nachaStoreDetail.append(
+    kicker,
+    initial,
+    title,
+    branch,
+    information,
+    directions,
+    note
+  );
+
+};
+
+
+// -----------------------------------------------------
+// 3. OUVERTURE DE LA FICHE FLOTTANTE
+// -----------------------------------------------------
+
+const openNachaStorePanel = store => {
+
+  if (!nachaStorePanel || !store) return;
+
+  const revision = ++nachaPanelRevision;
+
+
+  if (nachaPanelTimer !== null) {
+
+    window.clearTimeout(nachaPanelTimer);
+
+    nachaPanelTimer = null;
+
+  }
+
+
+  const panelAlreadyOpen =
+    nachaStorePanel.classList.contains('is-open');
+
+
+  // Transition entre deux points de vente.
+  if (panelAlreadyOpen) {
+
+    nachaStorePanel.classList.add('is-switching');
+
+
+    nachaPanelTimer = window.setTimeout(() => {
+
+      if (revision !== nachaPanelRevision) return;
+
+      renderNachaStoreDetails(store);
+
+      nachaStorePanel.classList.remove('is-switching');
+
+      nachaPanelTimer = null;
+
+    }, 170);
+
+
+    return;
+
+  }
+
+
+  // Première ouverture.
+  renderNachaStoreDetails(store);
+
+  nachaStorePanel.hidden = false;
+
+  nachaStorePanel.setAttribute('aria-hidden', 'false');
+
+  nachaStorePanel.removeAttribute('inert');
+
+
+  requestAnimationFrame(() => {
+
+    if (revision !== nachaPanelRevision) return;
+
+    nachaStorePanel.classList.add('is-open');
+
+  });
+
+};
+
+
+// -----------------------------------------------------
+// 4. FERMETURE DE LA FICHE
+// -----------------------------------------------------
+
+const closeNachaStorePanel = () => {
+
+  if (!nachaStorePanel) return;
+
+  const revision = ++nachaPanelRevision;
+
+
+  if (nachaPanelTimer !== null) {
+
+    window.clearTimeout(nachaPanelTimer);
+
+    nachaPanelTimer = null;
+
+  }
+
+
+  nachaStorePanel.classList.remove(
+    'is-open',
+    'is-switching'
+  );
+
+
+  nachaStorePanel.setAttribute('aria-hidden', 'true');
+
+  nachaStorePanel.setAttribute('inert', '');
+
+
+  activeNachaStore = null;
+
+
+  // Réinitialiser l'apparence des marqueurs.
+  nachaMarkers.forEach(item => {
+
+    item.element.classList.remove('is-active');
+
+  });
+
+
+  // Masquer après la transition.
+  nachaPanelTimer = window.setTimeout(() => {
+
+    if (
+      revision === nachaPanelRevision &&
+      !nachaStorePanel.classList.contains('is-open')
+    ) {
+
+      nachaStorePanel.hidden = true;
+
+    }
+
+    nachaPanelTimer = null;
+
+  }, 380);
+
+};
+
+
+// Bouton de fermeture.
+nachaStoreClose?.addEventListener(
+  'click',
+  closeNachaStorePanel
+);
+
+
+// Fermeture avec Échap.
+document.addEventListener('keydown', event => {
+
+  if (
+    event.key === 'Escape' &&
+    nachaStorePanel?.classList.contains('is-open')
+  ) {
+
+    closeNachaStorePanel();
+
+  }
+
+});
+
+
+// -----------------------------------------------------
+// 5. SÉLECTION DU POINT DE VENTE
+// -----------------------------------------------------
+
+const selectNachaStore = (
+  storeId,
+  centerMap = true
+) => {
+
+  const store = nachaStores.find(
+    item => item.id === storeId
+  );
+
+  if (!store) return;
+
+
+  activeNachaStore = storeId;
+
+
+  // Réinitialiser les marqueurs.
+  nachaMarkers.forEach((item, id) => {
+
+    item.element.classList.toggle(
+      'is-active',
+      id === storeId
+    );
+
+  });
+
+
+  // Afficher les informations.
+  openNachaStorePanel(store);
+
+
+  // Déplacement de la carte.
+  if (centerMap && nachaGoogleMap) {
+
+    nachaGoogleMap.panTo(store.position);
+
+    nachaGoogleMap.setZoom(
+      window.innerWidth <= 640 ? 14 : 15
+    );
+
+  }
+
+};
+
+
+// -----------------------------------------------------
+// 6. INITIALISATION GOOGLE MAPS
+// -----------------------------------------------------
+
+const initializeNachaGoogleMap = async () => {
+
+  if (!nachaMapElement || !nachaStores.length) return;
+
+
+  try {
+
+    // Charger uniquement les bibliothèques nécessaires.
+    const [
+      { Map },
+      { AdvancedMarkerElement }
+    ] = await Promise.all([
+
+      google.maps.importLibrary('maps'),
+
+      google.maps.importLibrary('marker')
+
+    ]);
+
+
+    // Initialisation de la carte.
+    nachaGoogleMap = new Map(nachaMapElement, {
+
+      center: {
+        lat: -4.3083,
+        lng: 15.3003
+      },
+
+      zoom: 12,
+
+      minZoom: 10,
+
+      maxZoom: 17,
+
+      // Identifiant requis pour AdvancedMarkerElement.
+      mapId: config.googleMapsMapId || 'DEMO_MAP_ID',
+
+      gestureHandling: 'cooperative',
+
+      clickableIcons: false,
+
+      streetViewControl: false,
+
+      mapTypeControl: false,
+
+      fullscreenControl: false,
+
+      zoomControl: true,
+
+      zoomControlOptions: {
+        position: google.maps.ControlPosition.RIGHT_BOTTOM
+      }
+
+    });
+
+
+    const bounds = new google.maps.LatLngBounds();
+
+    let successfulMarkers = 0;
+
+    let failedMarkers = 0;
+
+
+    // -------------------------------------------------
+    // CRÉATION DES MARQUEURS NACHA
+    // -------------------------------------------------
+
+    nachaStores.forEach((store, index) => {
+
+      try {
+
+        const lat = Number(store.position?.lat);
+
+        const lng = Number(store.position?.lng);
+
+
+        // Vérifier les coordonnées directement déclarées.
+        if (
+          !Number.isFinite(lat) ||
+          !Number.isFinite(lng) ||
+          lat < -90 ||
+          lat > 90 ||
+          lng < -180 ||
+          lng > 180
+        ) {
+
+          throw new Error(
+            'Coordonnées GPS invalides.'
+          );
+
+        }
+
+
+        const position = {
+          lat,
+          lng
+        };
+
+
+        // Élément HTML du marqueur.
+        const markerElement =
+          document.createElement('button');
+
+
+        markerElement.type = 'button';
+
+        markerElement.className = 'nacha-map-marker';
+
+        markerElement.setAttribute(
+          'aria-label',
+          `${store.name}, ${store.commune}`
+        );
+
+
+        const number =
+          document.createElement('span');
+
+        number.className = 'nacha-map-marker-number';
+
+        number.textContent =
+          String(store.number || index + 1)
+            .padStart(2, '0');
+
+
+        markerElement.appendChild(number);
+
+
+        // Marqueur Google Maps avancé.
+        const marker = new AdvancedMarkerElement({
+
+          map: nachaGoogleMap,
+
+          position,
+
+          content: markerElement,
+
+          title: `${store.name} — ${store.commune}`,
+
+          gmpClickable: true,
+
+          zIndex: 10 + index
+
+        });
+
+
+        // Interaction du marqueur.
+        marker.addEventListener('gmp-click', () => {
+
+          selectNachaStore(store.id, true);
+
+        });
+
+
+        // Stocker le marqueur et son élément HTML.
+        nachaMarkers.set(store.id, {
+
+          marker,
+
+          element: markerElement,
+
+          store
+
+        });
+
+
+        bounds.extend(position);
+
+        successfulMarkers++;
+
+
+      } catch (error) {
+
+        failedMarkers++;
+
+        console.error(
+          `Erreur de positionnement pour ${store.name}:`,
+          error
+        );
+
+      }
+
+    });
+
+
+    // -------------------------------------------------
+    // CADRAGE AUTOMATIQUE DE LA CARTE
+    // -------------------------------------------------
+
+    if (successfulMarkers > 0) {
+
+      nachaGoogleMap.fitBounds(bounds, 70);
+
+    }
+
+
+    // Supprimer le fallback.
+    if (nachaMapFallback) {
+
+      nachaMapFallback.hidden = true;
+
+    }
+
+
+    // Statut final.
+    if (failedMarkers > 0) {
+
+      setNachaMapStatus(
+        `${successfulMarkers} point(s) affiché(s) · ${failedMarkers} position(s) à vérifier.`
+      );
+
+    } else {
+
+      setNachaMapStatus(
+        `${successfulMarkers} points de vente NACHA · Sélectionnez un marqueur pour découvrir l'enseigne.`
+      );
+
+    }
+
+
+    // Compteur facultatif si ajouté plus tard au HTML.
+    const countElement = $('#nachaStoreCount');
+
+    if (countElement) {
+
+      countElement.textContent =
+        String(successfulMarkers).padStart(2, '0');
+
+    }
+
+
+  } catch (error) {
+
+    console.error(
+      'Erreur d’initialisation de la carte NACHA :',
+      error
+    );
+
+
+    setNachaMapStatus(
+      'Impossible de charger Google Maps. Vérifiez la clé API, le Map ID et les services activés.'
+    );
+
+
+    if (nachaMapFallback) {
+
+      nachaMapFallback.hidden = false;
+
+    }
+
+  }
+
+};
+
+
+// -----------------------------------------------------
+// 7. CHARGEMENT DE GOOGLE MAPS
+// -----------------------------------------------------
+
+if (nachaMapElement && nachaStores.length) {
+
+  const apiKey = String(
+    config.googleMapsApiKey || ''
+  ).trim();
+
+
+  if (
+    !apiKey ||
+    apiKey.includes('REMPLACER_PAR')
+  ) {
+
+    setNachaMapStatus(
+      'La clé Google Maps doit être configurée.'
+    );
+
+  } else {
+
+    // Callback utilisé par Google Maps.
+    window.initNachaStoresMap =
+      initializeNachaGoogleMap;
+
+
+    // Éviter de charger l'API une seconde fois.
+    if (window.google?.maps?.importLibrary) {
+
+      initializeNachaGoogleMap();
+
+    } else {
+
+      const googleMapsScript =
+        document.createElement('script');
+
+
+      googleMapsScript.src =
+        `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(apiKey)}&loading=async&callback=initNachaStoresMap&v=weekly`;
+
+
+      googleMapsScript.async = true;
+
+
+      googleMapsScript.onerror = () => {
+
+        setNachaMapStatus(
+          'Le chargement de Google Maps a échoué.'
+        );
+
+        if (nachaMapFallback) {
+          nachaMapFallback.hidden = false;
+        }
+
+      };
+
+
+      document.head.appendChild(googleMapsScript);
+
+    }
+
+
+    setNachaMapStatus(
+      'Chargement des localisations NACHA...'
+    );
+
+  }
+
+}
+
+
 })();
